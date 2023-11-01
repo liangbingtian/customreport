@@ -1,4 +1,5 @@
 package com.liang.customreport.jdapicall.bo.customreport;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.liang.customreport.jdapicall.bo.common.JdApiV2ResultBo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,7 +17,8 @@ import lombok.experimental.Accessors;
 public class JingdongAdsIbgCustomQueryV1ResBO implements Serializable {
 
   @ApiModelProperty(value = "相应", example = "")
-  private JingdongAdsIbgCustomQueryV1Response jingdong_ads_ibg_UniversalJosService_custom_query_v1_responce;
+  @JSONField(name = "jingdong_ads_ibg_UniversalJosService_custom_query_v1_responce")
+  private JingdongAdsIbgCustomQueryV1Response jingdongAdsIbgUniversalJosServiceCustomQueryV1Responce;
 
   @Data
   public static class JingdongAdsIbgCustomQueryV1Response {

@@ -10,3 +10,6 @@
   "normalMetrics": "impressions,clicks,cost,directOrderCnt,directOrderSum,indirectOrderCnt,indirectOrderSum,totalOrderCnt,totalOrderSum,directCartCnt,indirectCartCnt,totalCartCnt,likeCnt,commentCnt,shareCnt,followCnt,interactCnt,IR,totalPresaleOrderCnt,totalPresaleOrderSum,newCustomersCnt,preorderCnt,couponCnt,goodsAttentionCnt,shopAttentionCnt",
   "isDownload": true
 }
+
+"日期",	"账户名称",	"产品线",	"计划类型",	"计划ID",	"推广计划",	"单元ID",	"推广单元",	"创意ID",	"推广创意",	"品牌ID",	"品牌名称",	"类目ID"	,"类目名称",	"跟单SKU ID",	"人群ID",	"人群名称",	"广告定向类型",	"展现数"	,"点击数"	,"总费用",	"直接订单行",	"直接订单金额",	"间接订单行",	"间接订单金额",	"总订单行",	"总订单金额"	,"直接购物车数"	,"间接购物车数"	,"总购物车数",	"点赞数",	"评论数",	"分享数",	"关注数",	"互动数",	"互动率",	"预售订单行",	"预售订单金额",	"下单新客数",	"预约数",	"领劵数",	"商品关注数",	"店铺关注数"
+日期	账户名称	产品线	计划类型	计划ID	推广计划	单元ID	推广单元	创意ID	推广创意	品牌ID	品牌名称	类目ID	类目名称	跟单SKU ID	人群ID	人群名称	广告定向类型	展现数	点击数	总费用	直接订单行	直接订单金额	间接订单行	间接订单金额	总订单行	总订单金额	直接购物车数	间接购物车数	总购物车数	点赞数	评论数	分享数	关注数	互动数	互动率	预售订单行	预售订单金额	下单新客数	预约数	领劵数	商品关注数	店铺关注数

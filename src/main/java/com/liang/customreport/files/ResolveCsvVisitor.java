@@ -1,6 +1,10 @@
 package com.liang.customreport.files;
 
+import com.alibaba.fastjson.JSONWriter;
+import com.liang.customreport.common.Constants;
 import com.liang.customreport.files.consumer.CsvToJsonConsumer;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.Reader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -35,16 +39,20 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
   }
 
   private void doResolveCsv(Path path) {
-    final String targetJsonPath = path.toString() + "/" + System.currentTimeMillis() + ".json";
+    final String targetJsonPath = targetPath + "/" + System.currentTimeMillis() + ".json";
     CsvToJsonConsumer consumer = new CsvToJsonConsumer(targetJsonPath);
     try (
         Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-            .withHeader("日期", "账户名称", "产品线", "计划ID")
+            .withHeader(Constants.CSV_HEADER)
             .withIgnoreHeaderCase()
             .withTrim());
+        JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(targetJsonPath)))
     ) {
       for (CSVRecord csvRecord : csvParser) {
+        if (csvParser.getCurrentLineNumber()==1) {
+          continue;
+        }
         // Accessing values by the names assigned to each column
         String name = csvRecord.get("日期");
         String email = csvRecord.get("账户名称");
@@ -52,7 +60,7 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
         String country = csvRecord.get("计划ID");
       }
 
-    }catch (Exception e) {
+    } catch (Exception e) {
 
     }
   }

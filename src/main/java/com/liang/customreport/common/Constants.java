@@ -1,5 +1,8 @@
 package com.liang.customreport.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Constants {
 
   /* 默认分页个数 */
@@ -10,8 +13,18 @@ public class Constants {
   public static final int USER_MANAGE_FUNC_ID = 8;//用户管理的菜单主键
   public static final String ENT_ADMIN_ROLE_CODE = "SYS_020";
 
-
   public final static String USER_CODE = "usercode";
+
+  public static String[] CSV_HEADER = new String[]{"日期",	"账户名称",	"产品线",	"计划类型",	"计划ID",	"推广计划",	"单元ID",	"推广单元",	"创意ID",	"推广创意",	"品牌ID",	"品牌名称",	"类目ID"	,"类目名称",	"跟单SKU ID",	"人群ID",	"人群名称",	"广告定向类型",	"展现数"	,"点击数"	,"总费用",	"直接订单行",	"直接订单金额",	"间接订单行",	"间接订单金额",	"总订单行",	"总订单金额"	,"直接购物车数"	,"间接购物车数"	,"总购物车数",	"点赞数",	"评论数",	"分享数",	"关注数",	"互动数",	"互动率",	"预售订单行",	"预售订单金额",	"下单新客数",	"预约数",	"领劵数",	"商品关注数",	"店铺关注数"};
+
+  public static final Map<String , String> CSV_HEADER_MAP = new HashMap<>();
+
+  static {
+    CSV_HEADER_MAP.put("日期", "date_str");
+    CSV_HEADER_MAP.put("账户名称", "pin");
+    CSV_HEADER_MAP.put("产品线", "business");
+    CSV_HEADER_MAP.put("计划类型", "campaign_type");
+  }
 
   public final static String USER_NAME = "username";
   /**
