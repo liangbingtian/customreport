@@ -40,4 +40,14 @@ public class ApiCallTest {
     }
   }
 
+  @Test
+  public void readTest() {
+    try(InputStream inputStream = this.getClass().getClassLoader()
+        .getResourceAsStream("api/1698894717794.json")) {
+
+    }catch (Exception e) {
+
+    }
+  }
+
 }

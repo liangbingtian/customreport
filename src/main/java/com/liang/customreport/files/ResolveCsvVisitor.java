@@ -1,17 +1,21 @@
 package com.liang.customreport.files;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONWriter;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.liang.customreport.common.Constants;
-import com.liang.customreport.files.consumer.CsvToJsonConsumer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Random;
+import java.util.Map;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -35,12 +39,12 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
     if (!file.toString().endsWith(".csv")) {
       return FileVisitResult.CONTINUE;
     }
+    doResolveCsv(file);
     return FileVisitResult.CONTINUE;
   }
 
   private void doResolveCsv(Path path) {
     final String targetJsonPath = targetPath + "/" + System.currentTimeMillis() + ".json";
-    CsvToJsonConsumer consumer = new CsvToJsonConsumer(targetJsonPath);
     try (
         Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
@@ -49,19 +53,32 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
             .withTrim());
         JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(targetJsonPath)))
     ) {
+      SerializeConfig config = new SerializeConfig();
+      config.setAsmEnable(false);
+
+      writer.startArray();
       for (CSVRecord csvRecord : csvParser) {
-        if (csvParser.getCurrentLineNumber()==1) {
+        if (csvParser.getCurrentLineNumber() == 1) {
           continue;
         }
-        // Accessing values by the names assigned to each column
-        String name = csvRecord.get("日期");
-        String email = csvRecord.get("账户名称");
-        String phone = csvRecord.get("产品线");
-        String country = csvRecord.get("计划ID");
+        if (csvParser.getCurrentLineNumber() == 1000) {
+          writer.endArray();
+          writer.flush();
+          return;
+        }
+        JSONObject eachObject = new JSONObject();
+        for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP.entrySet()) {
+          final String chineseName = entry.getKey();
+          final String targetEnglishName = entry.getValue();
+          final String value = csvRecord.get(chineseName);
+          eachObject.put(targetEnglishName, value);
+        }
+        writer.writeObject(eachObject);
       }
-
+      writer.endArray();
+      writer.flush();
     } catch (Exception e) {
-
+      e.printStackTrace();
     }
   }
 }

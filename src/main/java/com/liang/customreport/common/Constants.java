@@ -24,6 +24,27 @@ public class Constants {
     CSV_HEADER_MAP.put("账户名称", "pin");
     CSV_HEADER_MAP.put("产品线", "business");
     CSV_HEADER_MAP.put("计划类型", "campaign_type");
+    CSV_HEADER_MAP.put("计划ID", "campaign_id");
+    CSV_HEADER_MAP.put("推广计划", "campaign_name");
+    CSV_HEADER_MAP.put("单元ID", "group_id");
+    CSV_HEADER_MAP.put("推广单元", "group_name");
+    CSV_HEADER_MAP.put("创意ID", "ad_id");
+    CSV_HEADER_MAP.put("推广创意", "ad_name");
+    CSV_HEADER_MAP.put("品牌ID", "sku_brand_id");
+    CSV_HEADER_MAP.put("品牌名称", "sku_brand_name");
+    CSV_HEADER_MAP.put("展现数", "impressions");
+    CSV_HEADER_MAP.put("点击数", "clicks");
+    CSV_HEADER_MAP.put("总费用", "all_cost");
+    CSV_HEADER_MAP.put("直接订单行", "dir_ord_cnt");
+    CSV_HEADER_MAP.put("直接订单金额", "dir_ord_sum");
+    CSV_HEADER_MAP.put("间接订单行", "ind_ord_cnt");
+    CSV_HEADER_MAP.put("间接订单金额", "ind_ord_sum");
+    CSV_HEADER_MAP.put("总订单行", "tot_ord_cnt");
+    CSV_HEADER_MAP.put("总订单金额", "tot_ord_sum");
+    CSV_HEADER_MAP.put("直接购物车数", "dir_cart_cnt");
+    CSV_HEADER_MAP.put("间接购物车数", "ind_cart_cnt");
+    CSV_HEADER_MAP.put("总购物车数", "tot_cart_cnt");
+    CSV_HEADER_MAP.put("下单新客数", "new_customer");
   }
 
   public final static String USER_NAME = "username";

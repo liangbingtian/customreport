@@ -1,6 +1,7 @@
 package csv;
 
 import com.liang.customreport.files.ExtractFileUtils;
+import com.liang.customreport.tools.CsvUtils;
 import java.io.IOException;
 import java.nio.file.Paths;
 import org.junit.Test;
@@ -11,10 +12,19 @@ import org.junit.Test;
  */
 public class FileUsingTest {
 
+  final String source = "/Users/liangbingtian/Downloads/压缩文件测试";
+  final String target = "/Users/liangbingtian/Downloads/压缩文件解压";
+  final String target2 = "/Users/liangbingtian/Downloads/json文件";
+
   @Test
   public void unzipFiles() throws IOException {
-    ExtractFileUtils.extractZipFiles("/Users/liangbingtian/Downloads/压缩文件测试",
-        "/Users/liangbingtian/Downloads/压缩文件解压");
+    ExtractFileUtils.extractZipFiles(source,
+        target);
+  }
+
+  @Test
+  public void csvToJson() throws IOException {
+    CsvUtils.processCsvToJson(target, target2);
   }
 
 }
