@@ -29,7 +29,7 @@ public class JdApiV2Service<T, R> {
 
   public static final String V = "2.0";
 
-  public JdApiV2ResultBo<R> doRequest(T param, ParamInfo info) {
+  public R doRequest(T param, Class<R> clazz, ParamInfo info) {
     JdApiV2RequestBo<T> req = new JdApiV2RequestBo<>();
     req.setParam(param);
 
@@ -54,14 +54,14 @@ public class JdApiV2Service<T, R> {
       throw new RuntimeException("生成京东api签名失败");
     }
 
-    return transform(HttpUtil.doPost(PLATFORM_SERVER_URL, paramMap));
+    return transform(HttpUtil.doPost(PLATFORM_SERVER_URL, paramMap), clazz);
   }
 
-  protected JdApiV2ResultBo<R> transform(String res) {
+  protected R transform(String res, Class<R> clazz) {
     if (res.contains("error_response")) {
       throw new RuntimeException(res);
     }
-    JdApiV2ResultBo<R> r = JSON.parseObject(res, JdApiV2ResultBo.class);
+    R r = JSON.parseObject(res, clazz);
     if (r == null) {
       throw new RuntimeException(res);
     }

@@ -36,7 +36,7 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
 
   @Override
   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-    if (!file.toString().endsWith(".csv")) {
+    if (!file.toString().endsWith(Constants.CSV)) {
       return FileVisitResult.CONTINUE;
     }
     doResolveCsv(file);
@@ -53,18 +53,12 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
             .withTrim());
         JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(targetJsonPath)))
     ) {
-      SerializeConfig config = new SerializeConfig();
-      config.setAsmEnable(false);
 
       writer.startArray();
+      int i = 0;
       for (CSVRecord csvRecord : csvParser) {
         if (csvParser.getCurrentLineNumber() == 1) {
           continue;
-        }
-        if (csvParser.getCurrentLineNumber() == 1000) {
-          writer.endArray();
-          writer.flush();
-          return;
         }
         JSONObject eachObject = new JSONObject();
         for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP.entrySet()) {
@@ -74,7 +68,9 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
           eachObject.put(targetEnglishName, value);
         }
         writer.writeObject(eachObject);
+        i++;
       }
+      System.out.println("一共输出了: " + i + "条");
       writer.endArray();
       writer.flush();
     } catch (Exception e) {

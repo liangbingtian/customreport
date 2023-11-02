@@ -22,7 +22,10 @@ public enum JdApiEnum {
       "自定义报表(全渠道业务线报表)",
       "com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ReqBO",
       "com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ResBO"),
-
+  REPORT_DOWNLOAD_QUERY("jingdong.ads.ibg.UniversalJosService.download",
+      "报表异步下载",
+      "com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadReqBO",
+      "com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadResBO"),
   ;
 
   /**

@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @ApiModel(value = "", description = "自定义报表(全渠道业务线)查询")
 public class JingdongAdsIbgCustomQueryV1ResBO implements Serializable {
 
-  @ApiModelProperty(value = "相应", example = "")
+  @ApiModelProperty(value = "响应", example = "")
   @JSONField(name = "jingdong_ads_ibg_UniversalJosService_custom_query_v1_responce")
   private JingdongAdsIbgCustomQueryV1Response jingdongAdsIbgUniversalJosServiceCustomQueryV1Responce;
 
@@ -25,6 +25,7 @@ public class JingdongAdsIbgCustomQueryV1ResBO implements Serializable {
 
     @ApiModelProperty(value = "响应", example = "00000")
     private JdApiV2ResultBo<DataBO> returnType;
+
   }
 
   @Data

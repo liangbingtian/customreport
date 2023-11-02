@@ -1,13 +1,20 @@
 package com.liang.customreport;
 
+
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author liangbingtian
  * @date 2023/10/31 下午4:33
  */
-public class MainJob {
+@Slf4j
+public class Main {
 
   public static void main(String[] args) {
 
+
   }
+
+
 
 }
