@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  * @date 2022/11/23 14:57
  * @desc 业务方法
  */
+@Slf4j
 public class JdApiV2Service<T, R> {
 
   public static final String PLATFORM_SERVER_URL = "https://api.jd.com/routerjson";
@@ -59,10 +61,12 @@ public class JdApiV2Service<T, R> {
 
   protected R transform(String res, Class<R> clazz) {
     if (res.contains("error_response")) {
+      log.error(JSON.toJSONString(res));
       throw new RuntimeException(res);
     }
     R r = JSON.parseObject(res, clazz);
     if (r == null) {
+      log.error(JSON.toJSONString(res));
       throw new RuntimeException(res);
     }
     return r;

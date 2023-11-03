@@ -1,13 +1,16 @@
 {
-  "startDay": "2023-10-02",
-  "endDay": "2023-10-31",
-  "clickOrOrderDay": 15,
+  "accessPin": "",
+  "authType": "0",
   "clickOrOrderCaliber": 0,
+  "clickOrOrderDay": 1,
+  "customFilters": "[{\"column\":\"businessType\",\"enumOp\":\"FO_IN\",\"values\":[\"2\",\"16777216\",\"1\",\"256\"]}]",
+  "dimensions": "pin,businessType,campaignTypeExp,campaign,group,ad,deliveryType,skuDocId,brand,category,crowdDimension",
+  "endDay": "2023-10-31",
   "granularity": 1,
+  "isDownload": true,
+  "normalMetrics": "impressions,clicks,cost,directOrderCnt,directOrderSum,indirectOrderCnt,indirectOrderSum,totalOrderCnt,totalOrderSum,directCartCnt,indirectCartCnt,totalCartCnt,likeCnt,commentCnt,shareCnt,followCnt,interactCnt,IR,totalPresaleOrderCnt,totalPresaleOrderSum,newCustomersCnt,preorderCnt,couponCnt,goodsAttentionCnt,shopAttentionCnt",
   "page": 0,
   "pageSize": 0,
-  "dimensions": "pin,businessType,campaignTypeExp,campaign,group,ad,deliveryType,skuDocId,brand,category,crowdDimension",
-  "normalMetrics": "impressions,clicks,cost,directOrderCnt,directOrderSum,indirectOrderCnt,indirectOrderSum,totalOrderCnt,totalOrderSum,directCartCnt,indirectCartCnt,totalCartCnt,likeCnt,commentCnt,shareCnt,followCnt,interactCnt,IR,totalPresaleOrderCnt,totalPresaleOrderSum,newCustomersCnt,preorderCnt,couponCnt,goodsAttentionCnt,shopAttentionCnt",
-  "customFilters": "[{\"column\":\"businessType\",\"enumOp\":\"FO_IN\",\"values\":[\"2\",\"16777216\",\"1\",\"256\"]}]",
-  "isDownload": true
+  "platformBusinessType": "DST_JZT",
+  "startDay": "2023-10-20"
 }

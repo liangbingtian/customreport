@@ -16,14 +16,17 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author liangbingtian
  * @date 2023/10/31 下午11:22
  */
+@Slf4j
 public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
 
 
@@ -35,23 +38,26 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
 
 
   @Override
-  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+  public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
     if (!file.toString().endsWith(Constants.CSV)) {
       return FileVisitResult.CONTINUE;
     }
+    log.info("csv文件转换为json:{}", file.toAbsolutePath().toString());
     doResolveCsv(file);
+    Files.deleteIfExists(file);
     return FileVisitResult.CONTINUE;
   }
 
   private void doResolveCsv(Path path) {
-    final String targetJsonPath = targetPath + "/" + System.currentTimeMillis() + ".json";
     try (
         Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
             .withHeader(Constants.CSV_HEADER)
             .withIgnoreHeaderCase()
             .withTrim());
-        JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(targetJsonPath)))
+        JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(
+            StringUtils.isNotBlank(targetPath)?targetPath:path.toString()
+            .replace(".csv", ".json"))))
     ) {
 
       writer.startArray();
