@@ -9,7 +9,7 @@ import java.util.List;
  * @author liangbingtian
  * @date 2023/11/03 下午2:29
  */
-public class JingdongAdsIbgCustomQueryV1ReqFieldCombine extends AbstractRandomFieldCombine<JingdongAdsIbgCustomQueryV1ReqBO> {
+public class JingdongAdsIbgCustomQueryV1ReqFieldCombine extends AbstractRandomFieldCombine<JingdongAdsIbgCustomQueryV1ReqBO, Integer> {
 
   public JingdongAdsIbgCustomQueryV1ReqFieldCombine(JingdongAdsIbgCustomQueryV1ReqBO paramBO) {
     this.reqBO = paramBO;

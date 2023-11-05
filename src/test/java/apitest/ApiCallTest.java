@@ -3,6 +3,7 @@ package apitest;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.Feature;
 import com.google.common.base.Preconditions;
+import com.liang.customreport.common.Constants;
 import com.liang.customreport.enums.JdApiEnum;
 import com.liang.customreport.files.ExtractFileUtils;
 import com.liang.customreport.jdapicall.JdApiV2Service;
@@ -11,9 +12,11 @@ import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQuer
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ResBO;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadReqBO;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadResBO;
+import com.liang.customreport.jdapicall.po.JdShopAuthorizeInfoPO;
 import com.liang.customreport.tools.CsvUtils;
 import com.liang.customreport.tools.WebUrlUtils;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -23,6 +26,8 @@ import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -166,6 +171,14 @@ public class ApiCallTest {
       fileName = "downloadedFile"; // 如果无法从头字段中获取文件名，使用默认文件名
     }
     return fileName;
+  }
+
+  @Test
+  public void ReadJsonTest() throws IOException {
+    final List<JdShopAuthorizeInfoPO> infos = JSON
+        .parseArray(Constants.INFO_LIST, JdShopAuthorizeInfoPO.class);
+    System.out.println();
+
   }
 
 }

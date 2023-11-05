@@ -7,7 +7,7 @@ import java.util.List;
  * @author liangbingtian
  * @date 2023/11/03 下午2:18 如果需要有排列组合传参的，进行参数的排列组合传递
  */
-public abstract class AbstractRandomFieldCombine<T> {
+public abstract class AbstractRandomFieldCombine<T, C> {
 
 
   protected T reqBO;
@@ -20,7 +20,7 @@ public abstract class AbstractRandomFieldCombine<T> {
    * @param fieldCount 字段个数
    * @param valueCount 字段值的个数
    */
-  public void randomFieldCombine(int fieldCount, int valueCount, Integer[]... arrays) {
+  public void randomFieldCombine(int fieldCount, int valueCount, C[]... arrays) {
     int totalCombinations = (int) Math.pow(valueCount, fieldCount);
     for (int i = 0; i < totalCombinations; i++) {
       for (int j = 0; j < fieldCount; j++) {
@@ -48,7 +48,7 @@ public abstract class AbstractRandomFieldCombine<T> {
    * @param j 具体需要设置的字段的索引
    * @param s 具体要设置的值
    */
-  protected abstract void processValue(int j, Integer s);
+  protected abstract void processValue(int j, C s);
 
   public List<T> getResult() {
     return result;

@@ -1,0 +1,752 @@
+[
+  {
+    "id": 1,
+    "username": "FTSJDZY",
+    "access_token": "1fb2353257524bf88d3a067195bdba82mzi1",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:01"
+  },
+  {
+    "id": 2,
+    "username": "hks17177104",
+    "access_token": "f2bfb04233b74c9d87fa230c77af6c29jjiz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 3,
+    "username": "jdangfa",
+    "access_token": "c72afbe7de184f9da2d249118d2f7d1bzizt",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 4,
+    "username": "PGBaylineFC",
+    "access_token": "0b3ddc93ebd642f59a1c915186497346zgrj",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 5,
+    "username": "PGBFTampax",
+    "access_token": "88f27f406ee144eb8a07a935a39ffbbdmnda",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 6,
+    "username": "RTB代理2",
+    "access_token": "a8fc01f5629f483d8dda22331f7a4fcbxzju",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 7,
+    "username": "丝蕴自营旗舰店投放",
+    "access_token": "79356123e7ee45c1839a940190d3d37emjnl",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 8,
+    "username": "施华蔻专业投放",
+    "access_token": "8f74dafa208140c58abb2438f9a81b61zmey",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 9,
+    "username": "施华蔻旗舰店",
+    "access_token": "7a4c1f31f2b64d07875877d0a39494530yzf",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 10,
+    "username": "施华蔻旗舰店2022",
+    "access_token": "070e4131ea014203b0d1549d04c8e31cqxmz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 11,
+    "username": "施华蔻自营投放",
+    "access_token": "c119cae287b6401cb8d344dcdbc13c31yzex",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 12,
+    "username": "澳芝曼投放",
+    "access_token": "c2e8ee76e3324a018b50ad461d2c51d0zjlo",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 13,
+    "username": "爱敬_自营1",
+    "access_token": "220c9b870c4f411c8590a3b0cc6472c4jiwy",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 14,
+    "username": "资生堂个人护理旗舰店",
+    "access_token": "7ade956561484c2c9e2e134408983d2dkztk",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 16,
+    "username": "宫中秘策推广",
+    "access_token": "09b217c816d54b6f916d2bb5533a5636yzgx",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 17,
+    "username": "宫中秘策-推广",
+    "access_token": "cbe95589c5754244a07bff5606dbddc4otu1",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 18,
+    "username": "POP直营店-投放",
+    "access_token": "18747a1f0d874f0184ebf89b2a4f6ce6hmwy",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 21,
+    "username": "aupres_pop",
+    "access_token": "ac5867d9928f4a71b38ae0e8cb794973dy3z",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 22,
+    "username": "Shiseido_子账号1",
+    "access_token": "f6d0d1da1bdb4f9d98d3f5543b19cf78gqxz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 23,
+    "username": "安热沙123",
+    "access_token": "f7078b4f58ec41829239a809eedbf207hing",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 25,
+    "username": "oupolai",
+    "access_token": "66358ddb60cf4f9ea59f3f6dc5d0a5efthkz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 26,
+    "username": "塞巴斯汀pop店",
+    "access_token": "33fc8317386d4a649526ce81b668610fnmyz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 27,
+    "username": "vivess716",
+    "access_token": "d898b460e73e4cbab0ba1c7701ec4bea0njb",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 28,
+    "username": "开云POP投放",
+    "access_token": "760b16de5ae5410892903f0087c1ffa1je2z",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 29,
+    "username": "MUFF2020",
+    "access_token": "5328fff1bd5843c2a20b1eea26e3774fmyog",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 30,
+    "username": "Guerlain_投放",
+    "access_token": "d412f0c05f6947cfa881c85d6002064exmmy",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 31,
+    "username": "妮维雅_男士自营1",
+    "access_token": "0c2d37abb46c4b859894d6cf00a93735dm3y",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 32,
+    "username": "妮维雅_女士自营1",
+    "access_token": "13240d2a92e64318bb1fb5c87af4b7aamynd",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 33,
+    "username": "GIVENCHY投放",
+    "access_token": "b7d830e3cafb4360ad28e8b56735fec5mwzt",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 34,
+    "username": "玫珂菲投放",
+    "access_token": "2430c7a7680d4e3494b8cee85acdfb3czmgm",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 35,
+    "username": "强生美妆投放鲲驰账号",
+    "access_token": "098fbc3a9afb455e9047f0e6105b6cb2m2e5",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 36,
+    "username": "娇兰自营官方旗舰店",
+    "access_token": "8870e989f2de4efab17985742b7700e55odl",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 38,
+    "username": "ELIXIR怡丽丝尔",
+    "access_token": "073337f64298421bbeb32947d53f67b1m3zj",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 39,
+    "username": "NAXISUO999",
+    "access_token": "aef8736dec28411abdbe3b65ebddf0fcznmr",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 40,
+    "username": "SANZHAIYISHENG587",
+    "access_token": "21adf0e4ae34429bbf76246144e6b5e7mjfh",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 41,
+    "username": "施华蔻自营投放2022",
+    "access_token": "fc9c32a763a94b588421cfab35a0ea9dzmyy",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 42,
+    "username": "贝玲妃投放2021",
+    "access_token": "1cb3ebf37ef1451f89c8c275c2edf7ff2viz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 43,
+    "username": "菲婷丝-惠润",
+    "access_token": "951093c758b442ebad127e5d28e108f2mdkz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 44,
+    "username": "鲲智网络2020",
+    "access_token": "714b00cbeda94187af110ee0c22c5ed5nze0",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 45,
+    "username": "菲婷丝-可悠然-投放",
+    "access_token": "76ff022178474a289e7057450c839bb8jaym",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 46,
+    "username": "惠润投放专用",
+    "access_token": "1f5b1ff5fbeb4ab49b55370eea44034czjvm",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 47,
+    "username": "yhx_vx999",
+    "access_token": "acc71ceb82094c998b1fa616b9812d1bzfjz",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 48,
+    "username": "yhx-wtg888",
+    "access_token": "a4b569b42d2142629fa40dc39558e762inty",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 49,
+    "username": "yhx-vx箱包",
+    "access_token": "fa5554d8a1f44b4aaa7da01d988737bb1ntu",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 50,
+    "username": "wanbaolong2022投放",
+    "access_token": "5f9872e565394e8b92fb8cb637377e32ztu2",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 51,
+    "username": "妮维雅_CPD_CPS1",
+    "access_token": "c550769c0727415581431c3fd188ee00mdc2",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 52,
+    "username": "妮维雅_联合活动",
+    "access_token": "7b3b4e3af759463a89f5e2945a2853c5yjrl",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 53,
+    "username": "Shiseido_联合活动3",
+    "access_token": "225d23583c814375a9ddf5735f361a84ji1z",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 54,
+    "username": "妮维雅_联合活动2",
+    "access_token": "f588342b6c5c40ef915e8e78ce805373odm0",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 55,
+    "username": "kunchi_2011",
+    "access_token": "987fa88cc9de4b0bb9b5285f9dd422254ogn",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 56,
+    "username": "jahwa-gaofu",
+    "access_token": "46305160cac74a54891633c459d0a335duxn",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 57,
+    "username": "POLA海外旗舰店",
+    "access_token": "2ad2b0246abe419da9f45193c6d2c629kmmi",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 58,
+    "username": "丝蕴自营投放2022",
+    "access_token": "0ff03b71044d4a7181100f7ff8c40014nzew",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 59,
+    "username": "kunchisy",
+    "access_token": "c00c0a781faa4d2f8c343d65ebbcf0b6xyza",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 60,
+    "username": "Amore-LV",
+    "access_token": "3dd6c14789e24da9997b8684a0068340mxnd",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 61,
+    "username": "鲲驰2021",
+    "access_token": "569aba14a0f84aa59efe8c838d95aeccwjhm",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 62,
+    "username": "美琦客2021",
+    "access_token": "3ee2c9e30058437da478faaff8ac51285ztm",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 63,
+    "username": "常熟鲲美新零售2021",
+    "access_token": "43b103e60918488aafc39214f53919f6nimt",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 64,
+    "username": "上海银河系2021",
+    "access_token": "7f6c60a412f546a2a58d48eae0cc5b6cytqx",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 65,
+    "username": "BSD彭艾云",
+    "access_token": "fe39a91cff0148e79982c0201b1825605mwn",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 66,
+    "username": "jd_nvbsd",
+    "access_token": "85bee87536ee4efc87f177fe960e52aczwu4",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 67,
+    "username": "bvp06121666",
+    "access_token": "f1eb73396ce14d8ab216d9d0c09758e3zjfl",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 68,
+    "username": "BSD-户外代理",
+    "access_token": "2ec19186203a4ecca0ca3a679e815f81xody",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 69,
+    "username": "BSD-奥莱代理",
+    "access_token": "3e352204e73844348366633b5fc235cdymdr",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 70,
+    "username": "BSD-童装代理",
+    "access_token": "3803786624cb4ffc90180db5deeaaf144njy",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 71,
+    "username": "BSD奥莱店铺推广",
+    "access_token": "3100e312824242439233c006a9b5854bmzew",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 72,
+    "username": "BSD户外店铺推广",
+    "access_token": "f24dad4f773441bc8ec26b1c0075c593ji0z",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 73,
+    "username": "波司登童装自营",
+    "access_token": "819f342b41d84dc48b0e5973b7c37fe1ode5",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-09 18:25:13",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 74,
+    "username": "wenger-TG",
+    "access_token": "bcc3090b440c4df3b9b670831dbc291bza5m",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-05-22 17:15:01",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 75,
+    "username": "jdwkun-2023",
+    "access_token": "30d6f2e1fcd44b219a9fcf61477ecb3dmmzb",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-06-26 19:01:30",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 90,
+    "username": "kunchicasio",
+    "access_token": "4c80d61f75c949aca43838c51a619068gq2m",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-06-28 14:00:19",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 92,
+    "username": "Longines-2021",
+    "access_token": "3813dffb075446899e0dc95634dfe81fmzmi",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-06-28 14:00:21",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 103,
+    "username": "格力高glico2019",
+    "access_token": "54229500b3114146b9eb285dbb9a5313ymjk",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-06-28 14:00:37",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 125,
+    "username": "Zenith真力时POP-代理",
+    "access_token": "05d41c2dc2844858b83119ad5c85a0e5ndfj",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-08-24 10:53:43",
+    "update_date": "2023-10-18 13:00:02"
+  },
+  {
+    "id": 126,
+    "username": "PGBaylineFC-POP",
+    "access_token": "355a950b18b041128cfb32abd622feeeytk1",
+    "appkey": "A1D3C721A3E382FF4915BE266B4294F6",
+    "app_secret": "8d08db8de0ec468ebe234dcfdc1c3dca",
+    "tf_open": 1,
+    "create_date": "2023-08-29 19:00:14",
+    "update_date": "2023-10-18 13:00:02"
+  }
+]

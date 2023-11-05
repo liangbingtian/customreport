@@ -1,16 +1,16 @@
 {
   "accessPin": "",
   "authType": "0",
-  "clickOrOrderCaliber": 0,
-  "clickOrOrderDay": 1,
+  "clickOrOrderCaliber": 1,
+  "clickOrOrderDay": 0,
   "customFilters": "[{\"column\":\"businessType\",\"enumOp\":\"FO_IN\",\"values\":[\"2\",\"16777216\",\"1\",\"256\"]}]",
   "dimensions": "pin,businessType,campaignTypeExp,campaign,group,ad,deliveryType,skuDocId,brand,category,crowdDimension",
-  "endDay": "2023-10-31",
+  "endDay": "2023-10-19",
   "granularity": 1,
   "isDownload": true,
   "normalMetrics": "impressions,clicks,cost,directOrderCnt,directOrderSum,indirectOrderCnt,indirectOrderSum,totalOrderCnt,totalOrderSum,directCartCnt,indirectCartCnt,totalCartCnt,likeCnt,commentCnt,shareCnt,followCnt,interactCnt,IR,totalPresaleOrderCnt,totalPresaleOrderSum,newCustomersCnt,preorderCnt,couponCnt,goodsAttentionCnt,shopAttentionCnt",
   "page": 0,
   "pageSize": 0,
   "platformBusinessType": "DST_JZT",
-  "startDay": "2023-10-20"
+  "startDay": "2023-10-01"
 }

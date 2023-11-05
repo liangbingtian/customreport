@@ -23,5 +23,7 @@ public class ParamInfo {
 
   private String api;
 
+  private String username;
+
 
 }

@@ -3,7 +3,7 @@ package com.liang.customreport.job;
 import cn.hutool.core.thread.ThreadUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
-import com.liang.customreport.Main;
+import com.liang.customreport.common.Constants;
 import com.liang.customreport.enums.JdApiEnum;
 import com.liang.customreport.files.ExtractFileUtils;
 import com.liang.customreport.jdapicall.JdApiV2Service;
@@ -12,7 +12,9 @@ import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQuer
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ResBO;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadReqBO;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadResBO;
+import com.liang.customreport.jdapicall.po.JdShopAuthorizeInfoPO;
 import com.liang.customreport.job.random.JingdongAdsIbgCustomQueryV1ReqFieldCombine;
+import com.liang.customreport.job.random.ParamInfoFieldCombine;
 import com.liang.customreport.mapstructs.JingdongAdsIbgCustomQueryV1ReqMappering;
 import com.liang.customreport.tools.CsvUtils;
 import com.liang.customreport.tools.WebUrlUtils;
@@ -24,6 +26,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -41,18 +44,40 @@ public class CustomReportDataJob {
 
   private static final String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试";
 
-  public void runJob() {
-
+  public void runMainJob() {
     //创建有四个线程的线程池
-    final ThreadPoolExecutor threadPoolExecutor = ThreadUtil.newExecutor(4, 4);
+    final ThreadPoolExecutor threadPoolExecutor = ThreadUtil.newExecutor(8, 8);
+    final List<JdShopAuthorizeInfoPO> infos = JSON
+        .parseArray(Constants.INFO_LIST, JdShopAuthorizeInfoPO.class);
+    List<CompletableFuture<Void>> allUsersResult = new ArrayList<>();
+    for (JdShopAuthorizeInfoPO infoPo : infos) {
+      final ParamInfo info = ParamInfo.builder()
+          .accessToken(infoPo.getAccessToken())
+          .appKey(infoPo.getAppkey())
+          .appSecret(infoPo.getAppSecret())
+          .api(JdApiEnum.CUSTOM_REPORT_QUERY.getApi())
+          .username(infoPo.getUsername())
+          .build();
+      final List<CompletableFuture<Void>> thisUserFutureResult = runJob(threadPoolExecutor, info);
+      allUsersResult.addAll(thisUserFutureResult);
+    }
+    CompletableFuture.allOf(allUsersResult.toArray(new CompletableFuture[0])).join();
+    log.info("所有用户的任务已经执行完成");
+    threadPoolExecutor.shutdown();
+  }
 
+  public List<CompletableFuture<Void>> runJob(ThreadPoolExecutor threadPoolExecutor, ParamInfo info) {
     //1. 自定义报表查询调用
-    final ParamInfo info = ParamInfo.builder()
-        .accessToken("1fb2353257524bf88d3a067195bdba82mzi1")
-        .appKey("A1D3C721A3E382FF4915BE266B4294F6")
-        .appSecret("8d08db8de0ec468ebe234dcfdc1c3dca")
-        .api(JdApiEnum.CUSTOM_REPORT_QUERY.getApi())
-        .build();
+
+    ParamInfoFieldCombine paramInfoFieldCombine = new ParamInfoFieldCombine(info);
+    paramInfoFieldCombine.randomFieldCombine();
+    final List<ParamInfo> paramInfoList = paramInfoFieldCombine.getResult();
+
+    JdApiV2Service<JingdongAdsIbgCustomQueryV1ReqBO, JingdongAdsIbgCustomQueryV1ResBO> service = new JdApiV2Service<>();
+
+    JdApiV2Service<JingdongAdsIbgDownloadReqBO, JingdongAdsIbgDownloadResBO> downloadService = new JdApiV2Service<>();
+
+    List<CompletableFuture<Void>> thisUserAllFutureResult = new ArrayList<>();
 
     try (InputStream inputStream = CustomReportDataJob.class.getClassLoader()
         .getResourceAsStream("queryparam/customreport_queryparam.json")) {
@@ -63,10 +88,6 @@ public class CustomReportDataJob {
           JingdongAdsIbgCustomQueryV1ReqBO.class);
 
       final List<String> srcAndTarget = processDate(reqBO);
-
-      JdApiV2Service<JingdongAdsIbgCustomQueryV1ReqBO, JingdongAdsIbgCustomQueryV1ResBO> service = new JdApiV2Service<>();
-
-      JdApiV2Service<JingdongAdsIbgDownloadReqBO, JingdongAdsIbgDownloadResBO> downloadService = new JdApiV2Service<>();
 
       for (String item : srcAndTarget) {
         final String[] subDates = item.split("->");
@@ -79,82 +100,73 @@ public class CustomReportDataJob {
         JingdongAdsIbgCustomQueryV1ReqFieldCombine randomCombine = new JingdongAdsIbgCustomQueryV1ReqFieldCombine(
             reqBo1);
         randomCombine.randomFieldCombine();
-        final List<JingdongAdsIbgCustomQueryV1ReqBO> combineResult = randomCombine.getResult();
+        List<JingdongAdsIbgCustomQueryV1ReqBO> combineResult = randomCombine.getResult();
 
-        CompletableFuture
-            .allOf(combineResult.stream().map(req -> CompletableFuture.supplyAsync(() -> {
-              log.info("开始时间:{}，结束时间:{}，口径:{}，订单状态:{}，转换周期:{}，调用传参:{}", startDayStr, endDayStr,
-                  req.getClickOrOrderCaliber(), req.getOrderStatusCategory(),
-                  req.getClickOrOrderDay(), JSON.toJSONString(req));
-              JingdongAdsIbgCustomQueryV1ResBO result = service
-                  .doRequest(req, JingdongAdsIbgCustomQueryV1ResBO.class, info);
-              log.info("开始时间:{}，结束时间:{}，口径:{}，订单状态:{}，转换周期:{},返回结果:{}", startDayStr, endDayStr,
-                  req.getClickOrOrderCaliber(), req.getOrderStatusCategory(),
-                  req.getClickOrOrderDay(), JSON.toJSONString(result));
-              return result.getJingdongAdsIbgUniversalJosServiceCustomQueryV1Responce()
-                  .getReturnType().getData().getDownloadId();
-            }, threadPoolExecutor).exceptionally(e -> {
-              log.error(e.getMessage());
-              return null;
-            }).thenAccept(downloadId -> {
-              if (downloadId == null) {
-                log.error("download为空");
-                return;
-              }
-              try {
-                JingdongAdsIbgDownloadReqBO downloadBO = new JingdongAdsIbgDownloadReqBO();
-                downloadBO.setDownloadId(downloadId);
-                info.setApi(JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi());
+        final List<CompletableFuture<Void>> thisTimeFutureResult = combineResult.stream().map(
+            req -> CompletableFuture
+                .runAsync(() -> {
+                  try {
+                    JingdongAdsIbgCustomQueryV1ResBO queryResult = service
+                        .doRequest(req, JingdongAdsIbgCustomQueryV1ResBO.class,
+                            paramInfoList.get(0));
+                    Integer downloadId = queryResult
+                        .getJingdongAdsIbgUniversalJosServiceCustomQueryV1Responce()
+                        .getReturnType().getData().getDownloadId();
+                    Preconditions.checkArgument(downloadId != null,
+                        "返回的downloadId为空,传递的参数为:" + JSON.toJSONString(req));
 
-                JingdongAdsIbgDownloadResBO result = downloadService
-                    .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class, info);
-                Integer status = result.getResponse().getReturnType().getData().getStatus();
-                while (status == 1) {
-                  log.info("downloadId:{},未获取到文件链接,继续获取...",
-                      result.getResponse().getReturnType().getData().getId());
-                  //status 为1 的话继续调用
-                  Thread.sleep(5000);
-                  result = downloadService
-                      .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class, info);
-                  status = result.getResponse().getReturnType().getData().getStatus();
-                }
-                Preconditions
-                    .checkArgument(status == 2, "调用异步下载api返回出错，返回报文为:" + JSON.toJSONString(result));
-                final String downloadUrl = result.getResponse().getReturnType().getData()
-                    .getDownloadUrl();
-                Preconditions.checkArgument(StringUtils.isNotBlank(downloadUrl),
-                    "status正常但是downloadUrl为空，返回报文为:" + JSON.toJSONString(result));
-                //获取成功，创建文件目录，往目录里下载
-                Path currentPath = Paths.get(saveDirectory);
-                // 拼接要创建的目录路径
-                Path subDirectory = Paths.get("FZ");
-                Path subDirectory1 = subDirectory
-                    .resolve(Paths.get(startDayStr + "->" + endDayStr));
-                Path directoryPath = currentPath.resolve(subDirectory1)
-                    .resolve(String.valueOf(downloadBO.getDownloadId()));
-                if (Files.notExists(directoryPath)) {
-                  Files.createDirectories(directoryPath);
-                  log.info("目录创建成功，目录路径为:{}", directoryPath);
-                }
-                log.info("downloadId:{},获取文件链接成功,开始下载...", downloadBO.getDownloadId());
-                WebUrlUtils.getFileFromUrl(downloadUrl, directoryPath);
-                log.info("downloadId:{},下载完成,开始解析...", downloadBO.getDownloadId());
-                ExtractFileUtils.extractZipFiles(directoryPath.toString(), null);
-                CsvUtils.processCsvToJson(directoryPath.toString(), null);
-              } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                e.printStackTrace();
-              }
-            })).toArray(CompletableFuture[]::new)).join();
-//          JingdongAdsIbgCustomQueryV1ResBO result = service
-//                .doRequest(req, JingdongAdsIbgCustomQueryV1ResBO.class, info);
-//          result.getJingdongAdsIbgUniversalJosServiceCustomQueryV1Responce().getReturnType().getData().getDownloadId();
-        log.info("所有任务已经提交到线程池");
+                    //开始文件生成下载
+                    JingdongAdsIbgDownloadReqBO downloadBO = new JingdongAdsIbgDownloadReqBO();
+                    downloadBO.setDownloadId(downloadId);
+                    JingdongAdsIbgDownloadResBO downloadResult = downloadService
+                        .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class,
+                            paramInfoList.get(1));
+                    Integer status = downloadResult.getResponse().getReturnType().getData()
+                        .getStatus();
+                    while (status == 1) {
+                      log.info("downloadId:{},未获取到文件链接,继续获取...",
+                          downloadResult.getResponse().getReturnType().getData().getId());
+                      //status 为1 的话继续调用
+                      Thread.sleep(5000);
+                      downloadResult = downloadService
+                          .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class, info);
+                      status = downloadResult.getResponse().getReturnType().getData()
+                          .getStatus();
+                    }
+                    Preconditions.checkArgument(status == 2,
+                        "调用异步下载api返回出错，返回报文为:" + JSON.toJSONString(downloadResult));
+                    final String downloadUrl = downloadResult.getResponse().getReturnType()
+                        .getData()
+                        .getDownloadUrl();
+                    Preconditions.checkArgument(StringUtils.isNotBlank(downloadUrl),
+                        "status正常但是downloadUrl为空，返回报文为:" + JSON.toJSONString(downloadResult));
+                    //获取成功，创建文件目录，往目录里下载
+                    Path currentPath = Paths.get(saveDirectory);
+                    // 拼接要创建的目录路径
+                    Path subDirectory = Paths.get(info.getUsername());
+                    Path subDirectory1 = subDirectory
+                        .resolve(Paths.get(startDayStr + "->" + endDayStr));
+                    Path directoryPath = currentPath.resolve(subDirectory1)
+                        .resolve(String.valueOf(downloadBO.getDownloadId()));
+                    if (Files.notExists(directoryPath)) {
+                      Files.createDirectories(directoryPath);
+                      log.info("目录创建成功，目录路径为:{}", directoryPath);
+                    }
+                    log.info("downloadId:{},获取文件链接成功,开始下载...", downloadBO.getDownloadId());
+                    WebUrlUtils.getFileFromUrl(downloadUrl, directoryPath);
+                    log.info("downloadId:{},下载完成,开始解析...", downloadBO.getDownloadId());
+                    ExtractFileUtils.extractZipFiles(directoryPath.toString(), null);
+                    CsvUtils.processCsvToJson(directoryPath.toString(), null);
+                  } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                  }
+                }, threadPoolExecutor)).collect(Collectors.toList());
+        thisUserAllFutureResult.addAll(thisTimeFutureResult);
       }
-      threadPoolExecutor.shutdown();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
+    return thisUserAllFutureResult;
   }
 
   private List<String> processDate(JingdongAdsIbgCustomQueryV1ReqBO o) {

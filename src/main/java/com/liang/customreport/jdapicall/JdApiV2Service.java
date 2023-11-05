@@ -56,17 +56,15 @@ public class JdApiV2Service<T, R> {
       throw new RuntimeException("生成京东api签名失败");
     }
 
-    return transform(HttpUtil.doPost(PLATFORM_SERVER_URL, paramMap), clazz);
+    return transform(HttpUtil.doPost(PLATFORM_SERVER_URL, paramMap), clazz, JSON.toJSONString(req.getParam()));
   }
 
-  protected R transform(String res, Class<R> clazz) {
+  protected R transform(String res, Class<R> clazz, String str) {
     if (res.contains("error_response")) {
-      log.error(JSON.toJSONString(res));
-      throw new RuntimeException(res);
+      throw new RuntimeException(res+"请求参数为:"+str);
     }
     R r = JSON.parseObject(res, clazz);
     if (r == null) {
-      log.error(JSON.toJSONString(res));
       throw new RuntimeException(res);
     }
     return r;

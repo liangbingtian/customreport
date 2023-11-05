@@ -1,9 +1,7 @@
 package com.liang.customreport.files;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONWriter;
-import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.liang.customreport.common.Constants;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -12,7 +10,6 @@ import java.io.Reader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
@@ -52,7 +49,7 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
     try (
         Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-            .withHeader(Constants.CSV_HEADER)
+            .withHeader(Constants.CSV_HEADER1)
             .withIgnoreHeaderCase()
             .withTrim());
         JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(
@@ -67,7 +64,7 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
           continue;
         }
         JSONObject eachObject = new JSONObject();
-        for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP.entrySet()) {
+        for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
           final String chineseName = entry.getKey();
           final String targetEnglishName = entry.getValue();
           final String value = csvRecord.get(chineseName);
@@ -76,7 +73,7 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
         writer.writeObject(eachObject);
         i++;
       }
-      System.out.println("一共输出了: " + i + "条");
+      log.info("一共输出了: " + i + "条");
       writer.endArray();
       writer.flush();
     } catch (Exception e) {
