@@ -2,8 +2,6 @@ package com.liang.customreport.job.random;
 
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ReqBO;
 import com.liang.customreport.mapstructs.JingdongAdsIbgCustomQueryV1ReqMappering;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author liangbingtian

@@ -3,9 +3,11 @@ package com.liang.customreport.job;
 import cn.hutool.core.thread.ThreadUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import com.liang.customreport.bo.ReportInfoBO;
 import com.liang.customreport.common.Constants;
 import com.liang.customreport.enums.JdApiEnum;
 import com.liang.customreport.files.ExtractFileUtils;
+import com.liang.customreport.files.customreport.CustomReportCsvVisitor;
 import com.liang.customreport.jdapicall.JdApiV2Service;
 import com.liang.customreport.jdapicall.bo.ParamInfo;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ReqBO;
@@ -16,8 +18,8 @@ import com.liang.customreport.jdapicall.po.JdShopAuthorizeInfoPO;
 import com.liang.customreport.job.random.JingdongAdsIbgCustomQueryV1ReqFieldCombine;
 import com.liang.customreport.job.random.ParamInfoFieldCombine;
 import com.liang.customreport.mapstructs.JingdongAdsIbgCustomQueryV1ReqMappering;
-import com.liang.customreport.tools.CsvUtils;
 import com.liang.customreport.tools.WebUrlUtils;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +28,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -42,13 +43,13 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class CustomReportDataJob {
 
-  private static final String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试";
+  private static final String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试1";
 
   public void runMainJob() {
     //创建有四个线程的线程池
     final ThreadPoolExecutor threadPoolExecutor = ThreadUtil.newExecutor(8, 8);
     final List<JdShopAuthorizeInfoPO> infos = JSON
-        .parseArray(Constants.INFO_LIST, JdShopAuthorizeInfoPO.class);
+        .parseArray(Constants.INFO1, JdShopAuthorizeInfoPO.class);
     List<CompletableFuture<Void>> allUsersResult = new ArrayList<>();
     for (JdShopAuthorizeInfoPO infoPo : infos) {
       final ParamInfo info = ParamInfo.builder()
@@ -66,7 +67,8 @@ public class CustomReportDataJob {
     threadPoolExecutor.shutdown();
   }
 
-  public List<CompletableFuture<Void>> runJob(ThreadPoolExecutor threadPoolExecutor, ParamInfo info) {
+  public List<CompletableFuture<Void>> runJob(ThreadPoolExecutor threadPoolExecutor,
+      ParamInfo info) {
     //1. 自定义报表查询调用
 
     ParamInfoFieldCombine paramInfoFieldCombine = new ParamInfoFieldCombine(info);
@@ -121,7 +123,14 @@ public class CustomReportDataJob {
                     JingdongAdsIbgDownloadResBO downloadResult = downloadService
                         .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class,
                             paramInfoList.get(1));
-                    Integer status = downloadResult.getResponse().getReturnType().getData()
+                    Integer status = Optional
+                        .ofNullable(downloadResult.getResponse().getReturnType().getData()).
+                            orElseThrow(() -> {
+                              log.error("接口:{},返回的data为空,请求参数[1]:{},[2]:{}",
+                                  JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi(),
+                                  JSON.toJSONString(paramInfoList.get(1)), downloadId);
+                              return new RuntimeException("获取文件返回值的data为空，详情请见日志");
+                            })
                         .getStatus();
                     while (status == 1) {
                       log.info("downloadId:{},未获取到文件链接,继续获取...",
@@ -129,8 +138,16 @@ public class CustomReportDataJob {
                       //status 为1 的话继续调用
                       Thread.sleep(5000);
                       downloadResult = downloadService
-                          .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class, info);
-                      status = downloadResult.getResponse().getReturnType().getData()
+                          .doRequest(downloadBO, JingdongAdsIbgDownloadResBO.class,
+                              paramInfoList.get(1));
+                      status = Optional
+                          .ofNullable(downloadResult.getResponse().getReturnType().getData()).
+                              orElseThrow(() -> {
+                                log.error("接口:{},返回的data为空,请求参数[1]:{},[2]:{}",
+                                    JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi(),
+                                    JSON.toJSONString(paramInfoList.get(1)), downloadId);
+                                return new RuntimeException("获取文件返回值的data为空，详情请见日志");
+                              })
                           .getStatus();
                     }
                     Preconditions.checkArgument(status == 2,
@@ -152,11 +169,15 @@ public class CustomReportDataJob {
                       Files.createDirectories(directoryPath);
                       log.info("目录创建成功，目录路径为:{}", directoryPath);
                     }
-                    log.info("downloadId:{},获取文件链接成功,开始下载...", downloadBO.getDownloadId());
-                    WebUrlUtils.getFileFromUrl(downloadUrl, directoryPath);
-                    log.info("downloadId:{},下载完成,开始解析...", downloadBO.getDownloadId());
-                    ExtractFileUtils.extractZipFiles(directoryPath.toString(), null);
-                    CsvUtils.processCsvToJson(directoryPath.toString(), null);
+                    final ReportInfoBO infoBO = ReportInfoBO.builder()
+                        .username(paramInfoList.get(1).getUsername())
+                        .startDate(req.getStartDay())
+                        .endDate(req.getEndDay())
+                        .clickOrOrderCaliber(req.getClickOrOrderCaliber())
+                        .clickOrOrderDay(req.getClickOrOrderDay())
+                        .orderStatusCategory(req.getOrderStatusCategory())
+                        .giftFlag(req.getGiftFlag()).build();
+                    processDownload(downloadId, downloadUrl, directoryPath, infoBO);
                   } catch (Exception e) {
                     log.error(e.getMessage(), e);
                   }
@@ -167,6 +188,18 @@ public class CustomReportDataJob {
       log.error(e.getMessage(), e);
     }
     return thisUserAllFutureResult;
+  }
+
+  private void processDownload(Integer downloadId, String downloadUrl,
+      Path directoryPath, ReportInfoBO infoBO) throws IOException {
+    log.info("downloadId:{},获取文件链接成功,开始下载...", downloadId);
+    WebUrlUtils.getFileFromUrl(downloadUrl, directoryPath);
+    log.info("downloadId:{},下载完成,开始解析...", downloadId);
+    ExtractFileUtils.extractZipFiles(directoryPath.toString(), null);
+    CustomReportCsvVisitor visitor = new CustomReportCsvVisitor(null, infoBO, Constants.CSV_HEADER1,
+        Constants.CSV_HEADER_MAP1);
+    Files.walkFileTree(directoryPath, visitor);
+    log.info("目录:{}里的csv文件转换为json文件完毕", directoryPath);
   }
 
   private List<String> processDate(JingdongAdsIbgCustomQueryV1ReqBO o) {

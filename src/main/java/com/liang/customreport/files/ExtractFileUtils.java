@@ -15,7 +15,7 @@ public class ExtractFileUtils {
   public static void extractZipFiles(String source, String target) throws IOException {
     UnzipFileVisitor visitor = new UnzipFileVisitor(target);
     Files.walkFileTree(Paths.get(source), visitor);
-    log.info("目录:{}里的zip文件解压完毕", source);
+    log.info("目录:{},里的zip文件解压完毕", source);
   }
 
 

@@ -1,7 +1,9 @@
 package com.liang.customreport.files;
 
+import cn.hutool.core.util.ZipUtil;
 import com.liang.customreport.exception.BusinessRuntimeException;
 import com.liang.customreport.tools.Zip4jUtil;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -42,10 +44,7 @@ public class UnzipFileVisitor extends SimpleFileVisitor<Path> {
     return FileVisitResult.CONTINUE;
   }
 
-  private void doExtract(Path path) throws ZipException {
-    final ZipFile zipFile = Optional.ofNullable(Zip4jUtil.newZipFile(path.toString()))
-        .orElseThrow(() -> new BusinessRuntimeException("找不到这个文件"));
-    zipFile.extractAll(StringUtils.isNotBlank(targetPath)?targetPath:path.toString()
-    .replace(".zip", ""));
+  private void doExtract(Path path) {
+    ZipUtil.unzip(path.toString(), StringUtils.isNotBlank(targetPath)?targetPath:path.getParent().toString());
   }
 }

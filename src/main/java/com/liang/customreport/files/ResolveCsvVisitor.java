@@ -2,6 +2,7 @@ package com.liang.customreport.files;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONWriter;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.liang.customreport.common.Constants;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -24,13 +25,22 @@ import org.apache.commons.lang3.StringUtils;
  * @date 2023/10/31 下午11:22
  */
 @Slf4j
-public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
-
+public abstract class ResolveCsvVisitor<T> extends SimpleFileVisitor<Path> {
 
   private final String targetPath;
 
-  public ResolveCsvVisitor(String targetPath) {
+  private final T info;
+
+  private final String[] excelHeaders;
+
+  private final Map<String, String> excelHeadersMapping;
+
+  public ResolveCsvVisitor(String targetPath, T info,
+      String[] excelHeaders, Map<String, String> excelHeadersMapping) {
     this.targetPath = targetPath;
+    this.info = info;
+    this.excelHeaders = excelHeaders;
+    this.excelHeadersMapping = excelHeadersMapping;
   }
 
 
@@ -49,14 +59,14 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
     try (
         Reader reader = Files.newBufferedReader(path);
         CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-            .withHeader(Constants.CSV_HEADER1)
+            .withHeader(excelHeaders)
             .withIgnoreHeaderCase()
             .withTrim());
         JSONWriter writer = new JSONWriter(new BufferedWriter(new FileWriter(
             StringUtils.isNotBlank(targetPath)?targetPath:path.toString()
             .replace(".csv", ".json"))))
     ) {
-
+      writer.config(SerializerFeature.WriteMapNullValue, true);
       writer.startArray();
       int i = 0;
       for (CSVRecord csvRecord : csvParser) {
@@ -64,12 +74,14 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
           continue;
         }
         JSONObject eachObject = new JSONObject();
-        for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
+        for (Map.Entry<String, String> entry : excelHeadersMapping.entrySet()) {
           final String chineseName = entry.getKey();
           final String targetEnglishName = entry.getValue();
           final String value = csvRecord.get(chineseName);
           eachObject.put(targetEnglishName, value);
         }
+        //设置基本信息
+        processBaseInfo(eachObject, info);
         writer.writeObject(eachObject);
         i++;
       }
@@ -80,4 +92,11 @@ public class ResolveCsvVisitor extends SimpleFileVisitor<Path> {
       e.printStackTrace();
     }
   }
+
+  /**
+   * 解析csv时候有和业务相关的基本信息
+   * @param t 基本信息
+   * @param object jsonObject
+   */
+  abstract protected void processBaseInfo(JSONObject object, T t);
 }

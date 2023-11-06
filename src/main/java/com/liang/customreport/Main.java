@@ -13,7 +13,7 @@ public class Main {
 
   public static void main(String[] args) {
     CustomReportDataJob dataJob = new CustomReportDataJob();
-    dataJob.runJob();
+    dataJob.runMainJob();
   }
 
 

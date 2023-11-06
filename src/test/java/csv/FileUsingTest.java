@@ -16,19 +16,18 @@ import org.junit.Test;
 @Slf4j
 public class FileUsingTest {
 
-  final String source = "/Users/liangbingtian/Downloads/压缩文件测试";
-  final String target = "/Users/liangbingtian/Downloads/压缩文件解压";
+  final String source = "/Users/liangbingtian/Downloads/整体流程测试1";
   final String target2 = "/Users/liangbingtian/Downloads/json文件";
   final String target3 = "/Users/liangbingtian/Downloads/整体流程测试/FZ";
 
   @Test
   public void unzipFiles() throws IOException {
-    ExtractFileUtils.extractZipFiles(target3, null);
+    ExtractFileUtils.extractZipFiles(source, null);
   }
 
   @Test
   public void csvToJson() throws IOException {
-    CsvUtils.processCsvToJson(target3, null);
+    CsvUtils.processCsvToJson(source, null);
   }
 
   @Test
