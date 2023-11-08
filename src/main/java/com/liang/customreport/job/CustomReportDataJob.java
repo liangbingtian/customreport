@@ -2,12 +2,13 @@ package com.liang.customreport.job;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONWriter;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.base.Preconditions;
 import com.liang.customreport.bo.ReportInfoBO;
 import com.liang.customreport.common.Constants;
 import com.liang.customreport.enums.JdApiEnum;
-import com.liang.customreport.files.ExtractFileUtils;
-import com.liang.customreport.files.customreport.CustomReportCsvVisitor;
 import com.liang.customreport.jdapicall.JdApiV2Service;
 import com.liang.customreport.jdapicall.bo.ParamInfo;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ReqBO;
@@ -19,8 +20,16 @@ import com.liang.customreport.job.random.JingdongAdsIbgCustomQueryV1ReqFieldComb
 import com.liang.customreport.job.random.ParamInfoFieldCombine;
 import com.liang.customreport.mapstructs.JingdongAdsIbgCustomQueryV1ReqMappering;
 import com.liang.customreport.tools.WebUrlUtils;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,11 +38,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -43,11 +59,13 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class CustomReportDataJob {
 
-  private static final String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试1";
+  private static final String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试";
 
   public void runMainJob() {
     //创建有四个线程的线程池
-    final ThreadPoolExecutor threadPoolExecutor = ThreadUtil.newExecutor(8, 8);
+    final long startTime = System.currentTimeMillis();
+    final ThreadPoolExecutor threadPoolExecutorCallDownloadId = ThreadUtil.newExecutor(8, 8);
+    final ThreadPoolExecutor threadPoolExecutorDownloadFile = ThreadUtil.newExecutor(8, 8);
     final List<JdShopAuthorizeInfoPO> infos = JSON
         .parseArray(Constants.INFO1, JdShopAuthorizeInfoPO.class);
     List<CompletableFuture<Void>> allUsersResult = new ArrayList<>();
@@ -59,18 +77,23 @@ public class CustomReportDataJob {
           .api(JdApiEnum.CUSTOM_REPORT_QUERY.getApi())
           .username(infoPo.getUsername())
           .build();
-      final List<CompletableFuture<Void>> thisUserFutureResult = runJob(threadPoolExecutor, info);
+      final List<CompletableFuture<Void>> thisUserFutureResult = runJob(
+          threadPoolExecutorCallDownloadId
+          , threadPoolExecutorDownloadFile
+          , info);
       allUsersResult.addAll(thisUserFutureResult);
     }
     CompletableFuture.allOf(allUsersResult.toArray(new CompletableFuture[0])).join();
-    log.info("所有用户的任务已经执行完成");
-    threadPoolExecutor.shutdown();
+    final long endTime = System.currentTimeMillis();
+    log.info("所有用户的任务已经执行完成，执行时间为:{}ms", (endTime - startTime));
+    threadPoolExecutorDownloadFile.shutdown();
+    threadPoolExecutorCallDownloadId.shutdown();
   }
 
-  public List<CompletableFuture<Void>> runJob(ThreadPoolExecutor threadPoolExecutor,
+  public List<CompletableFuture<Void>> runJob(ThreadPoolExecutor threadPoolExecutorOne,
+      ThreadPoolExecutor threadPoolExecutorTwo,
       ParamInfo info) {
     //1. 自定义报表查询调用
-
     ParamInfoFieldCombine paramInfoFieldCombine = new ParamInfoFieldCombine(info);
     paramInfoFieldCombine.randomFieldCombine();
     final List<ParamInfo> paramInfoList = paramInfoFieldCombine.getResult();
@@ -106,17 +129,40 @@ public class CustomReportDataJob {
 
         final List<CompletableFuture<Void>> thisTimeFutureResult = combineResult.stream().map(
             req -> CompletableFuture
-                .runAsync(() -> {
+                .supplyAsync(() -> {
                   try {
-                    JingdongAdsIbgCustomQueryV1ResBO queryResult = service
-                        .doRequest(req, JingdongAdsIbgCustomQueryV1ResBO.class,
-                            paramInfoList.get(0));
+                    JingdongAdsIbgCustomQueryV1ResBO queryResult;
+                    Long code;
+                    do {
+                      Thread.sleep(500);
+                      queryResult = service
+                          .doRequest(req, JingdongAdsIbgCustomQueryV1ResBO.class,
+                              paramInfoList.get(0));
+                      code = Optional.ofNullable(queryResult
+                          .getJingdongAdsIbgUniversalJosServiceCustomQueryV1Responce()
+                          .getReturnType()).
+                          orElseThrow(() -> {
+                            log.error("接口:{},返回的data为空,请求参数[1]:{},[2]:{}",
+                                JdApiEnum.CUSTOM_REPORT_QUERY.getApi(),
+                                JSON.toJSONString(paramInfoList.get(0)), JSON.toJSONString(req));
+                            return new RuntimeException("获取文件返回值的data为空，详情请见日志");
+                          }).getCode();
+                    } while (code.equals(401L));
                     Integer downloadId = queryResult
                         .getJingdongAdsIbgUniversalJosServiceCustomQueryV1Responce()
                         .getReturnType().getData().getDownloadId();
                     Preconditions.checkArgument(downloadId != null,
                         "返回的downloadId为空,传递的参数为:" + JSON.toJSONString(req));
-
+                    return downloadId;
+                  } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    return null;
+                  }
+                }, threadPoolExecutorOne).thenAcceptAsync(downloadId -> {
+                  if (downloadId == null) {
+                    return;
+                  }
+                  try {
                     //开始文件生成下载
                     JingdongAdsIbgDownloadReqBO downloadBO = new JingdongAdsIbgDownloadReqBO();
                     downloadBO.setDownloadId(downloadId);
@@ -150,6 +196,8 @@ public class CustomReportDataJob {
                               })
                           .getStatus();
                     }
+                    log.info("downloadId:{},获取到文件链接,链接为:{}", downloadId,
+                        downloadResult.getResponse().getReturnType().getData().getDownloadUrl());
                     Preconditions.checkArgument(status == 2,
                         "调用异步下载api返回出错，返回报文为:" + JSON.toJSONString(downloadResult));
                     final String downloadUrl = downloadResult.getResponse().getReturnType()
@@ -158,17 +206,14 @@ public class CustomReportDataJob {
                     Preconditions.checkArgument(StringUtils.isNotBlank(downloadUrl),
                         "status正常但是downloadUrl为空，返回报文为:" + JSON.toJSONString(downloadResult));
                     //获取成功，创建文件目录，往目录里下载
-                    Path currentPath = Paths.get(saveDirectory);
-                    // 拼接要创建的目录路径
-                    Path subDirectory = Paths.get(info.getUsername());
-                    Path subDirectory1 = subDirectory
-                        .resolve(Paths.get(startDayStr + "->" + endDayStr));
-                    Path directoryPath = currentPath.resolve(subDirectory1)
-                        .resolve(String.valueOf(downloadBO.getDownloadId()));
-                    if (Files.notExists(directoryPath)) {
-                      Files.createDirectories(directoryPath);
-                      log.info("目录创建成功，目录路径为:{}", directoryPath);
+                    Path currentPath = Paths
+                        .get(saveDirectory, info.getUsername(), startDayStr + "->" + endDayStr, downloadId.toString());
+                    if (Files.notExists(currentPath)) {
+                      Files.createDirectories(currentPath);
+                      log.info("目录创建成功，目录路径为:{}", currentPath);
                     }
+                    final Path targetFile = currentPath
+                        .resolve(downloadBO.getDownloadId() + ".json");
                     final ReportInfoBO infoBO = ReportInfoBO.builder()
                         .username(paramInfoList.get(1).getUsername())
                         .startDate(req.getStartDay())
@@ -177,11 +222,20 @@ public class CustomReportDataJob {
                         .clickOrOrderDay(req.getClickOrOrderDay())
                         .orderStatusCategory(req.getOrderStatusCategory())
                         .giftFlag(req.getGiftFlag()).build();
-                    processDownload(downloadId, downloadUrl, directoryPath, infoBO);
+                    final String name = WebUrlUtils
+                        .getFileNameFromHeader(new URL(downloadUrl));
+                    if (name.endsWith(".csv")) {
+                      processDownloadCsv(downloadId, downloadUrl, currentPath, infoBO);
+                    } else if (name.endsWith(".zip")) {
+                      processDownloadZipFile(downloadId, downloadUrl, currentPath, infoBO);
+                    } else {
+                      log.error("{},得到的文件路径既不是zip，也不是csv，文件路径为:{}", downloadId, downloadUrl);
+                    }
                   } catch (Exception e) {
                     log.error(e.getMessage(), e);
                   }
-                }, threadPoolExecutor)).collect(Collectors.toList());
+                }, threadPoolExecutorTwo)
+        ).collect(Collectors.toList());
         thisUserAllFutureResult.addAll(thisTimeFutureResult);
       }
     } catch (Exception e) {
@@ -190,16 +244,157 @@ public class CustomReportDataJob {
     return thisUserAllFutureResult;
   }
 
-  private void processDownload(Integer downloadId, String downloadUrl,
-      Path directoryPath, ReportInfoBO infoBO) throws IOException {
-    log.info("downloadId:{},获取文件链接成功,开始下载...", downloadId);
-    WebUrlUtils.getFileFromUrl(downloadUrl, directoryPath);
-    log.info("downloadId:{},下载完成,开始解析...", downloadId);
-    ExtractFileUtils.extractZipFiles(directoryPath.toString(), null);
-    CustomReportCsvVisitor visitor = new CustomReportCsvVisitor(null, infoBO, Constants.CSV_HEADER1,
-        Constants.CSV_HEADER_MAP1);
-    Files.walkFileTree(directoryPath, visitor);
-    log.info("目录:{}里的csv文件转换为json文件完毕", directoryPath);
+  private void processDownloadCsv(Integer downloadId, String downloadUrl,
+      Path directoryPath, ReportInfoBO infoBO) {
+    try {
+      byte[] fileByteArray = WebUrlUtils.getByteArrayFromUrl(downloadUrl);
+      if (fileByteArray == null || fileByteArray.length == 0) {
+        log.error("downloadId:{}, downloadUrl:{},参数为:{}, 没有从流中遍历到该文件", downloadId,
+            downloadUrl, JSON.toJSONString(infoBO));
+        return;
+      }
+      final Path oldFileName = directoryPath.resolve(Paths.get(downloadId + ".json"));
+      final long startTime = System.currentTimeMillis();
+      try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileByteArray);
+          InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
+          Reader reader = new BufferedReader(inputStreamReader);
+          JSONWriter writer = new JSONWriter(
+              new BufferedWriter(new FileWriter(oldFileName.toString())));
+          CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
+              .withHeader(Constants.CSV_HEADER1)
+              .withIgnoreHeaderCase()
+              .withTrim())
+      ) {
+        writer.config(SerializerFeature.WriteMapNullValue, true);
+        writer.startArray();
+        int i = 0;
+        for (CSVRecord csvRecord : csvParser) {
+          if (csvParser.getCurrentLineNumber() == 1) {
+            continue;
+          }
+          JSONObject eachObject = new JSONObject();
+          for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
+            final String chineseName = entry.getKey();
+            final String targetEnglishName = entry.getValue();
+            final String value = csvRecord.get(chineseName);
+            eachObject.put(targetEnglishName, value);
+          }
+          //设置基本信息
+          processBaseInfo(eachObject, infoBO);
+          writer.writeObject(eachObject);
+          i++;
+        }
+        writer.endArray();
+        writer.flush();
+        log.info("downloadId:{},  一共输出了: {}条", downloadId, i);
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+      final long endTime = System.currentTimeMillis();
+      String builder = downloadId + "-" + (endTime - startTime)
+          + "ms"
+          + "-"
+          + infoBO.getClickOrOrderDay()
+          + "-"
+          + infoBO.getClickOrOrderCaliber()
+          + "-"
+          + infoBO.getOrderStatusCategory()
+          + ".json";
+      final File newFileName = oldFileName.getParent().resolve(builder).toFile();
+      final File oldFile = oldFileName.toFile();
+      final boolean b = oldFile.renameTo(newFileName);
+      if (!b) {
+        log.error("文件名称从:{},转换为:{},失败", oldFile.getName(), newFileName.getName());
+      }
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  private void processDownloadZipFile(Integer downloadId, String downloadUrl,
+      Path directoryPath, ReportInfoBO infoBO) {
+    //获取zip流,并进行文件解析
+    try {
+      ZipInputStream zipInputStream = WebUrlUtils.getZipInputStreamFromUrl(downloadUrl);
+      int csvNum = 0;
+      ZipEntry zipEntry;
+      while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+        csvNum++;
+        final long startTime = System.currentTimeMillis();
+        final Path oldFileName = directoryPath.resolve(Paths.get(csvNum + ".json"));
+        JSONWriter writer = new JSONWriter(
+            new BufferedWriter(new FileWriter(oldFileName.toString())));
+        writer.config(SerializerFeature.WriteMapNullValue, true);
+        writer.startArray();
+        try (InputStreamReader inputStreamReader =
+            new InputStreamReader(
+                new ByteArrayInputStream(Objects
+                    .requireNonNull(WebUrlUtils.getByteArrayFromZipInputStream(zipInputStream))));
+            Reader reader = new BufferedReader(inputStreamReader);
+            CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
+                .withHeader(Constants.CSV_HEADER1)
+                .withIgnoreHeaderCase()
+                .withTrim())
+        ) {
+          int i = 0;
+          for (CSVRecord csvRecord : csvParser) {
+            if (csvParser.getCurrentLineNumber() == 1) {
+              continue;
+            }
+            JSONObject eachObject = new JSONObject();
+            for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
+              final String chineseName = entry.getKey();
+              final String targetEnglishName = entry.getValue();
+              final String value = csvRecord.get(chineseName);
+              eachObject.put(targetEnglishName, value);
+            }
+            //设置基本信息
+            processBaseInfo(eachObject, infoBO);
+            writer.writeObject(eachObject);
+            i++;
+          }
+          log.info("downloadId:{}, 文件：{}, 一共输出了: {}条", downloadId, zipEntry.getName(), i);
+          zipInputStream.closeEntry();
+        } catch (Exception e) {
+          log.error(e.getMessage(), e);
+        }
+        writer.endArray();
+        writer.flush();
+        final long endTime = System.currentTimeMillis();
+
+        String builder = downloadId + "-" + (endTime - startTime)
+            + "ms"
+            + "-"
+            + infoBO.getClickOrOrderDay()
+            + "-"
+            + infoBO.getClickOrOrderCaliber()
+            + "-"
+            + infoBO.getOrderStatusCategory()
+            + "-第" + csvNum + "个文件"
+            + ".json";
+        final File newFileName = oldFileName.getParent().resolve(builder).toFile();
+        final File oldFile = oldFileName.toFile();
+        final boolean b = oldFile.renameTo(newFileName);
+        if (!b) {
+          log.error("文件名称从:{},转换为:{},失败", oldFile.getName(), newFileName.getName());
+        }
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+  }
+
+  private void processBaseInfo(JSONObject object, ReportInfoBO reportInfoBO) {
+    object.put(Constants.USER_NAME, reportInfoBO.getUsername());
+    object.put(Constants.START_DATE, reportInfoBO.getStartDate());
+    object.put(Constants.END_DATE, reportInfoBO.getEndDate());
+    object.put(Constants.TRANS_DAYS, reportInfoBO.getClickOrOrderDay());
+    object.put(Constants.CALIBER, reportInfoBO.getClickOrOrderCaliber());
+    object.put(Constants.GIFT_FLAG, reportInfoBO.getGiftFlag());
+    object.put(Constants.ORDER_STATUS, reportInfoBO.getOrderStatusCategory());
+    object.put(Constants.EFFECT, 1);
+    object.put(Constants.IS_DAILY, 1);
   }
 
   private List<String> processDate(JingdongAdsIbgCustomQueryV1ReqBO o) {

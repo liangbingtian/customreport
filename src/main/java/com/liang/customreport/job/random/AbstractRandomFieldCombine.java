@@ -35,8 +35,7 @@ public abstract class AbstractRandomFieldCombine<T, C> {
   }
 
   /**
-   * 使用mapstruct生成一个一样的对象，潜拷贝
-   *
+   * 使用mapstruct生成一个一样的对象
    * @param reqBO
    * @return
    */

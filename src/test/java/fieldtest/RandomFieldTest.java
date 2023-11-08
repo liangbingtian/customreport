@@ -13,7 +13,7 @@ import org.junit.Test;
 public class RandomFieldTest {
 
   @Test
-  public void randomEightField() {
+  public void randomThreeFieldsTwoValues() {
     int fieldCount = 3;
     int valueCount = 2;
     int totalCombinations = (int) Math.pow(valueCount, fieldCount);
@@ -41,6 +41,27 @@ public class RandomFieldTest {
 
         System.out.println("Combination: " + i + " - Field " + j + ": " + element);
       }
+    }
+  }
+
+  @Test
+  public void randomThreeFieldsThreeValues() {
+    int numberOfFields = 3;
+    int bitsPerField = 2; // 两个二进制位可以表示 0, 1, 2, 3 四种不同的组合
+
+    int combinations = (int) Math.pow(2, numberOfFields * bitsPerField);
+
+    for (int i = 0; i < combinations; i++) {
+      for (int j = 0; j < numberOfFields; j++) {
+        // 计算每个字段的起始位和结束位
+        int startBit = j * bitsPerField;
+        int endBit = (j + 1) * bitsPerField;
+
+        // 从 i 中提取当前字段的二进制表示
+        int fieldValue = (i >> startBit) & ((1 << bitsPerField) - 1);
+        System.out.print(fieldValue + " "); // 输出当前字段的取值
+      }
+      System.out.println();
     }
   }
 

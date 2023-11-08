@@ -1,13 +1,16 @@
 package com.liang.customreport.tools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.file.Path;
+import java.util.zip.ZipInputStream;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,7 +33,8 @@ public class WebUrlUtils {
     String fileName = getFileNameFromHeader(url);
 
     // 创建文件输出流
-    FileOutputStream outputStream = new FileOutputStream(saveDirectory.resolve(fileName).toString());
+    FileOutputStream outputStream = new FileOutputStream(
+        saveDirectory.resolve(fileName).toString());
 
     // 获取输入流
     InputStream inputStream = connection.getInputStream();
@@ -49,8 +53,51 @@ public class WebUrlUtils {
     log.info("文件下载完成！文件夹:{},文件名:{}", saveDirectory, fileName);
   }
 
+  public static byte[] getByteArrayFromUrl(String fileUrl) throws MalformedURLException {
+    URL url = new URL(fileUrl);
+    try (InputStream in = url.openStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      byte[] buffer = new byte[8192];
+      int bytesRead;
+      while ((bytesRead = in.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+      }
+      return out.toByteArray();
+    } catch (IOException e) {
+      log.error(e.getMessage(), e);
+      return null;
+    }
+  }
 
-  private static String getFileNameFromHeader(URL url) throws UnsupportedEncodingException {
+  public static ZipInputStream getZipInputStreamFromUrl(String fileUrl)
+      throws IOException {
+    // 创建 URL 对象
+    URL url = new URL(fileUrl);
+
+    // 打开 URL 连接
+    InputStream urlStream = url.openStream();
+
+    // 创建 ZipInputStream 并将其连接到 URL 输入流
+    return new ZipInputStream(urlStream);
+  }
+
+  public static byte[] getByteArrayFromZipInputStream(ZipInputStream zipInputStream) {
+    try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      byte[] buffer = new byte[8192];
+      int bytesRead;
+      while ((bytesRead = zipInputStream.read(buffer)) != -1) {
+        out.write(buffer, 0, bytesRead);
+      }
+      return out.toByteArray();
+    }catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return null;
+    }
+  }
+
+
+
+  public static String getFileNameFromHeader(URL url) throws UnsupportedEncodingException {
     String fileName = null;
     final String decode = URLDecoder.decode(url.getPath(), "UTF-8");
     int lastSlashIndex = decode.lastIndexOf('/');
