@@ -1,6 +1,5 @@
 package apitest;
 
-import cn.hutool.core.util.ZipUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONWriter;
@@ -12,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.liang.customreport.bo.ReportInfoBO;
 import com.liang.customreport.common.Constants;
 import com.liang.customreport.enums.JdApiEnum;
-import com.liang.customreport.files.ExtractFileUtils;
 import com.liang.customreport.jdapicall.JdApiV2Service;
 import com.liang.customreport.jdapicall.bo.ParamInfo;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ReqBO;
@@ -20,7 +18,6 @@ import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQuer
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadReqBO;
 import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgDownloadResBO;
 import com.liang.customreport.jdapicall.po.JdShopAuthorizeInfoPO;
-import com.liang.customreport.tools.CsvUtils;
 import com.liang.customreport.tools.WebUrlUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,7 +29,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -93,7 +89,7 @@ public class ApiCallTest {
       JingdongAdsIbgDownloadReqBO reqBO = new JingdongAdsIbgDownloadReqBO();
       reqBO.setDownloadId(47227393);
       final ParamInfo info = ParamInfo.builder()
-          .accessToken("fe39a91cff0148e79982c0201b1825605mwn")
+          .accessToken("f7078b4f58ec41829239a809eedbf207hing")
           .appKey("A1D3C721A3E382FF4915BE266B4294F6")
           .appSecret("8d08db8de0ec468ebe234dcfdc1c3dca")
           .api(JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi())
@@ -133,64 +129,7 @@ public class ApiCallTest {
           .clickOrOrderDay(15)
           .orderStatusCategory(null)
           .giftFlag(1).build();
-//      final byte[] byteArrayFromUrl = WebUrlUtils.getByteArrayFromUrl(downloadUrl);
-//      try (ZipInputStream zipInputStream =
-//          new ZipInputStream(
-//              new ByteArrayInputStream(
-//                  Optional.ofNullable(byteArrayFromUrl)
-//                      .orElseThrow(
-//                          () -> new RuntimeException("从url:" + downloadUrl + "获取的文件流为空"))))) {
-//        JSONWriter writer = new JSONWriter(
-//            new BufferedWriter(new FileWriter(targetPath.toString())));
-//        writer.config(SerializerFeature.WriteMapNullValue, true);
-//        writer.startArray();
-//        while (zipInputStream.getNextEntry() != null) {
-//          try (
-//              ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Objects
-//                  .requireNonNull(WebUrlUtils.getByteArrayFromZipInputStream(zipInputStream)));
-//              InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
-//              Reader reader = new BufferedReader(inputStreamReader);
-//              CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
-//                  .withHeader(Constants.CSV_HEADER1)
-//                  .withIgnoreHeaderCase()
-//                  .withTrim())
-//          ) {
-//            int i = 0;
-//            for (CSVRecord csvRecord : csvParser) {
-//              if (csvParser.getCurrentLineNumber() == 1) {
-//                continue;
-//              }
-//              JSONObject eachObject = new JSONObject();
-//              for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
-//                final String chineseName = entry.getKey();
-//                final String targetEnglishName = entry.getValue();
-//                final String value = csvRecord.get(chineseName);
-//                eachObject.put(targetEnglishName, value);
-//              }
-//              //设置基本信息
-//              processBaseInfo(eachObject, infoBO);
-//              writer.writeObject(eachObject);
-//              i++;
-//            }
-//            log.info("一共输出了: " + i + "条");
-//
-//          } catch (Exception e) {
-//            e.printStackTrace();
-//          }
-//        }
-//        writer.endArray();
-//        writer.flush();
-//        final long start = System.currentTimeMillis();
-//        File file = targetPath.toFile();
-//        File newFile = subDirectory1.resolve("修改后.json").toFile();
-//        final boolean b = file.renameTo(newFile);
-//        final long end = System.currentTimeMillis();
-//        log.info("耗时为:{}", (end - start));
-//        log.info("解析完成，文件的路径为:{}", newFile.getPath());
-//      } catch (Exception e) {
-//        log.error(e.getMessage(), e);
-//      }
-      processDownloadZipFile(reqBO.getDownloadId(), downloadUrl, targetDirectory, infoBO);
+      processDownloadCsv(reqBO.getDownloadId(), downloadUrl, targetDirectory, infoBO);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       e.printStackTrace();

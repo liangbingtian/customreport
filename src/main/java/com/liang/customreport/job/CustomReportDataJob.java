@@ -2,9 +2,8 @@ package com.liang.customreport.job;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONWriter;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.common.base.Preconditions;
 import com.liang.customreport.bo.ReportInfoBO;
 import com.liang.customreport.common.Constants;
@@ -21,14 +20,13 @@ import com.liang.customreport.job.random.ParamInfoFieldCombine;
 import com.liang.customreport.mapstructs.JingdongAdsIbgCustomQueryV1ReqMappering;
 import com.liang.customreport.tools.WebUrlUtils;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,7 +65,7 @@ public class CustomReportDataJob {
     final ThreadPoolExecutor threadPoolExecutorCallDownloadId = ThreadUtil.newExecutor(8, 8);
     final ThreadPoolExecutor threadPoolExecutorDownloadFile = ThreadUtil.newExecutor(8, 8);
     final List<JdShopAuthorizeInfoPO> infos = JSON
-        .parseArray(Constants.INFO1, JdShopAuthorizeInfoPO.class);
+        .parseArray(Constants.INFO_LIST, JdShopAuthorizeInfoPO.class);
     List<CompletableFuture<Void>> allUsersResult = new ArrayList<>();
     for (JdShopAuthorizeInfoPO infoPo : infos) {
       final ParamInfo info = ParamInfo.builder()
@@ -196,7 +194,8 @@ public class CustomReportDataJob {
                               })
                           .getStatus();
                     }
-                    log.info("downloadId:{},获取到文件链接,链接为:{}", downloadId,
+                    log.info("username:{}, downloadId:{},获取到文件链接,链接为:{}",
+                        paramInfoList.get(1).getUsername(), downloadId,
                         downloadResult.getResponse().getReturnType().getData().getDownloadUrl());
                     Preconditions.checkArgument(status == 2,
                         "调用异步下载api返回出错，返回报文为:" + JSON.toJSONString(downloadResult));
@@ -207,13 +206,12 @@ public class CustomReportDataJob {
                         "status正常但是downloadUrl为空，返回报文为:" + JSON.toJSONString(downloadResult));
                     //获取成功，创建文件目录，往目录里下载
                     Path currentPath = Paths
-                        .get(saveDirectory, info.getUsername(), startDayStr + "->" + endDayStr, downloadId.toString());
+                        .get(saveDirectory, info.getUsername(), startDayStr + "->" + endDayStr,
+                            downloadId.toString());
                     if (Files.notExists(currentPath)) {
                       Files.createDirectories(currentPath);
                       log.info("目录创建成功，目录路径为:{}", currentPath);
                     }
-                    final Path targetFile = currentPath
-                        .resolve(downloadBO.getDownloadId() + ".json");
                     final ReportInfoBO infoBO = ReportInfoBO.builder()
                         .username(paramInfoList.get(1).getUsername())
                         .startDate(req.getStartDay())
@@ -255,37 +253,43 @@ public class CustomReportDataJob {
       }
       final Path oldFileName = directoryPath.resolve(Paths.get(downloadId + ".json"));
       final long startTime = System.currentTimeMillis();
+      JsonFactory factory = new JsonFactory();
       try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileByteArray);
           InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
           Reader reader = new BufferedReader(inputStreamReader);
-          JSONWriter writer = new JSONWriter(
-              new BufferedWriter(new FileWriter(oldFileName.toString())));
+          FileOutputStream outputStream = new FileOutputStream(oldFileName.toString());
+          JsonGenerator generator = factory.createGenerator(outputStream);
           CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
               .withHeader(Constants.CSV_HEADER1)
               .withIgnoreHeaderCase()
               .withTrim())
       ) {
-        writer.config(SerializerFeature.WriteMapNullValue, true);
-        writer.startArray();
+        generator.writeStartArray();
         int i = 0;
         for (CSVRecord csvRecord : csvParser) {
           if (csvParser.getCurrentLineNumber() == 1) {
             continue;
           }
-          JSONObject eachObject = new JSONObject();
-          for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
+          generator.writeStartObject();
+          for (Map.Entry<String, String> entry : Constants.CSV_HEADER_STR_MAP1.entrySet()) {
             final String chineseName = entry.getKey();
             final String targetEnglishName = entry.getValue();
             final String value = csvRecord.get(chineseName);
-            eachObject.put(targetEnglishName, value);
+            generator.writeStringField(targetEnglishName, value);
+          }
+          for (Map.Entry<String, String> entry : Constants.CSV_HEADER_NUMBER_MAP1.entrySet()) {
+            final String chineseName = entry.getKey();
+            final String targetEnglishName = entry.getValue();
+            final String value = csvRecord.get(chineseName);
+            generator.writeNumberField(targetEnglishName, Long.parseLong(value));
           }
           //设置基本信息
-          processBaseInfo(eachObject, infoBO);
-          writer.writeObject(eachObject);
+          processBaseInfo(generator, infoBO);
+          generator.writeEndObject();
           i++;
         }
-        writer.endArray();
-        writer.flush();
+        generator.writeEndArray();
+        generator.flush();
         log.info("downloadId:{},  一共输出了: {}条", downloadId, i);
       } catch (Exception e) {
         log.error(e.getMessage(), e);
@@ -315,18 +319,17 @@ public class CustomReportDataJob {
   private void processDownloadZipFile(Integer downloadId, String downloadUrl,
       Path directoryPath, ReportInfoBO infoBO) {
     //获取zip流,并进行文件解析
-    try {
-      ZipInputStream zipInputStream = WebUrlUtils.getZipInputStreamFromUrl(downloadUrl);
-      int csvNum = 0;
+    JsonFactory factory = new JsonFactory();
+    final Path oldFileName = directoryPath.resolve(Paths.get(downloadId + ".json"));
+    try (
+        ZipInputStream zipInputStream = WebUrlUtils.getZipInputStreamFromUrl(downloadUrl);
+        FileOutputStream outputStream = new FileOutputStream(oldFileName.toString());
+        JsonGenerator generator = factory.createGenerator(outputStream);
+    ) {
       ZipEntry zipEntry;
+      final long startTime = System.currentTimeMillis();
+      generator.writeStartArray();
       while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-        csvNum++;
-        final long startTime = System.currentTimeMillis();
-        final Path oldFileName = directoryPath.resolve(Paths.get(csvNum + ".json"));
-        JSONWriter writer = new JSONWriter(
-            new BufferedWriter(new FileWriter(oldFileName.toString())));
-        writer.config(SerializerFeature.WriteMapNullValue, true);
-        writer.startArray();
         try (InputStreamReader inputStreamReader =
             new InputStreamReader(
                 new ByteArrayInputStream(Objects
@@ -342,16 +345,22 @@ public class CustomReportDataJob {
             if (csvParser.getCurrentLineNumber() == 1) {
               continue;
             }
-            JSONObject eachObject = new JSONObject();
-            for (Map.Entry<String, String> entry : Constants.CSV_HEADER_MAP1.entrySet()) {
+            generator.writeStartObject();
+            for (Map.Entry<String, String> entry : Constants.CSV_HEADER_STR_MAP1.entrySet()) {
               final String chineseName = entry.getKey();
               final String targetEnglishName = entry.getValue();
               final String value = csvRecord.get(chineseName);
-              eachObject.put(targetEnglishName, value);
+              generator.writeStringField(targetEnglishName, value);
+            }
+            for (Map.Entry<String, String> entry : Constants.CSV_HEADER_NUMBER_MAP1.entrySet()) {
+              final String chineseName = entry.getKey();
+              final String targetEnglishName = entry.getValue();
+              final String value = csvRecord.get(chineseName);
+              generator.writeNumberField(targetEnglishName, Long.parseLong(value));
             }
             //设置基本信息
-            processBaseInfo(eachObject, infoBO);
-            writer.writeObject(eachObject);
+            processBaseInfo(generator, infoBO);
+            generator.writeEndObject();
             i++;
           }
           log.info("downloadId:{}, 文件：{}, 一共输出了: {}条", downloadId, zipEntry.getName(), i);
@@ -359,42 +368,53 @@ public class CustomReportDataJob {
         } catch (Exception e) {
           log.error(e.getMessage(), e);
         }
-        writer.endArray();
-        writer.flush();
-        final long endTime = System.currentTimeMillis();
+      }
+      generator.writeEndArray();
+      generator.flush();
+      generator.close();
+      final long endTime = System.currentTimeMillis();
 
-        String builder = downloadId + "-" + (endTime - startTime)
-            + "ms"
-            + "-"
-            + infoBO.getClickOrOrderDay()
-            + "-"
-            + infoBO.getClickOrOrderCaliber()
-            + "-"
-            + infoBO.getOrderStatusCategory()
-            + "-第" + csvNum + "个文件"
-            + ".json";
-        final File newFileName = oldFileName.getParent().resolve(builder).toFile();
-        final File oldFile = oldFileName.toFile();
-        final boolean b = oldFile.renameTo(newFileName);
-        if (!b) {
-          log.error("文件名称从:{},转换为:{},失败", oldFile.getName(), newFileName.getName());
-        }
+      String builder = downloadId + "-" + (endTime - startTime)
+          + "ms"
+          + "-"
+          + infoBO.getClickOrOrderDay()
+          + "-"
+          + infoBO.getClickOrOrderCaliber()
+          + "-"
+          + infoBO.getOrderStatusCategory()
+          + ".json";
+      final File newFileName = oldFileName.getParent().resolve(builder).toFile();
+      final File oldFile = oldFileName.toFile();
+      final boolean b = oldFile.renameTo(newFileName);
+      if (!b) {
+        log.error("文件名称从:{},转换为:{},失败", oldFile.getName(), newFileName.getName());
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
   }
 
-  private void processBaseInfo(JSONObject object, ReportInfoBO reportInfoBO) {
-    object.put(Constants.USER_NAME, reportInfoBO.getUsername());
-    object.put(Constants.START_DATE, reportInfoBO.getStartDate());
-    object.put(Constants.END_DATE, reportInfoBO.getEndDate());
-    object.put(Constants.TRANS_DAYS, reportInfoBO.getClickOrOrderDay());
-    object.put(Constants.CALIBER, reportInfoBO.getClickOrOrderCaliber());
-    object.put(Constants.GIFT_FLAG, reportInfoBO.getGiftFlag());
-    object.put(Constants.ORDER_STATUS, reportInfoBO.getOrderStatusCategory());
-    object.put(Constants.EFFECT, 1);
-    object.put(Constants.IS_DAILY, 1);
+  public void processBaseInfo(JsonGenerator object, ReportInfoBO reportInfoBO) throws IOException {
+    object.writeStringField(Constants.USER_NAME, reportInfoBO.getUsername());
+    object.writeStringField(Constants.START_DATE, reportInfoBO.getStartDate());
+    object.writeStringField(Constants.END_DATE, reportInfoBO.getEndDate());
+    object.writeNumberField(Constants.TRANS_DAYS, reportInfoBO.getClickOrOrderDay());
+    object.writeNumberField(Constants.CALIBER, reportInfoBO.getClickOrOrderCaliber());
+
+    if (reportInfoBO.getGiftFlag() == null) {
+      object.writeNullField(Constants.GIFT_FLAG);
+    } else {
+      object.writeNumberField(Constants.GIFT_FLAG, reportInfoBO.getGiftFlag());
+    }
+
+    if (reportInfoBO.getOrderStatusCategory() == null) {
+      object.writeNullField(Constants.ORDER_STATUS);
+    } else {
+      object.writeNumberField(Constants.ORDER_STATUS, reportInfoBO.getOrderStatusCategory());
+    }
+
+    object.writeNumberField(Constants.EFFECT, 1);
+    object.writeNumberField(Constants.IS_DAILY, 1);
   }
 
   private List<String> processDate(JingdongAdsIbgCustomQueryV1ReqBO o) {
