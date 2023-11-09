@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -57,7 +58,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class CustomReportDataJob {
 
-  private static final String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试";
+  private static String saveDirectory = "/Users/liangbingtian/Downloads/整体流程测试";
 
   public void runMainJob() {
     //创建有四个线程的线程池
@@ -66,6 +67,17 @@ public class CustomReportDataJob {
     final ThreadPoolExecutor threadPoolExecutorDownloadFile = ThreadUtil.newExecutor(8, 8);
     final List<JdShopAuthorizeInfoPO> infos = JSON
         .parseArray(Constants.INFO_LIST, JdShopAuthorizeInfoPO.class);
+    //saveDirectory替换为当前jar包所在的目录
+    try {
+      // 获取当前 JAR 包的路径
+      String jarPath = CustomReportDataJob.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+      // 获取 JAR 包所在的目录
+      saveDirectory = new File(jarPath).getParent();
+      log.info("获取目录成功，目录为:{}", saveDirectory);
+    } catch (Exception e) {
+      log.error("获取jar包所在的目录失败，错误为:{}, 使用默认目录", e.getMessage());
+    }
+
     List<CompletableFuture<Void>> allUsersResult = new ArrayList<>();
     for (JdShopAuthorizeInfoPO infoPo : infos) {
       final ParamInfo info = ParamInfo.builder()
@@ -205,6 +217,7 @@ public class CustomReportDataJob {
                     Preconditions.checkArgument(StringUtils.isNotBlank(downloadUrl),
                         "status正常但是downloadUrl为空，返回报文为:" + JSON.toJSONString(downloadResult));
                     //获取成功，创建文件目录，往目录里下载
+
                     Path currentPath = Paths
                         .get(saveDirectory, info.getUsername(), startDayStr + "->" + endDayStr,
                             downloadId.toString());
@@ -402,7 +415,7 @@ public class CustomReportDataJob {
     object.writeNumberField(Constants.CALIBER, reportInfoBO.getClickOrOrderCaliber());
 
     if (reportInfoBO.getGiftFlag() == null) {
-      object.writeNullField(Constants.GIFT_FLAG);
+      object.writeNumberField(Constants.GIFT_FLAG, 1L);
     } else {
       object.writeNumberField(Constants.GIFT_FLAG, reportInfoBO.getGiftFlag());
     }

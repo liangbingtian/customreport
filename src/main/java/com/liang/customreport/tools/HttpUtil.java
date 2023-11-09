@@ -48,7 +48,7 @@ public class HttpUtil {
         CloseableHttpResponse response = null;
 
         try {
-            logger.info("doPost: {}", url);
+            logger.debug("doPost: {}", url);
 //            RequestConfig requestConfig = RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000).setSocketTimeout(5000).build();
 //            httpPost.setConfig(requestConfig);
             response = httpclient.execute(httpPost);
@@ -57,7 +57,7 @@ public class HttpUtil {
             if (state == HttpStatus.SC_OK) {
                 HttpEntity responseEntity = response.getEntity();
                 String s = EntityUtils.toString(responseEntity, CHAR_SET);
-                logger.info("responseEntity: {}", s);
+                logger.debug("responseEntity: {}", s);
                 return s;
             } else{
                 logger.error("请求返回:"+state+"("+url+")");
@@ -106,16 +106,16 @@ public class HttpUtil {
         httpPost.setEntity(entity);
         CloseableHttpResponse response = null;
         try {
-            logger.info("doPost: {}", url);
-            logger.info("params: {}", params);
-            logger.info("headerMap: {}", JSON.toJSONString(headerMap));
+            logger.debug("doPost: {}", url);
+            logger.debug("params: {}", params);
+            logger.debug("headerMap: {}", JSON.toJSONString(headerMap));
             response = httpclient.execute(httpPost);
             StatusLine status = response.getStatusLine();
             int state = status.getStatusCode();
             if (state == HttpStatus.SC_OK) {
                 HttpEntity responseEntity = response.getEntity();
                 String s = EntityUtils.toString(responseEntity, CHAR_SET);
-                logger.info("responseEntity: {}", s);
+                logger.debug("responseEntity: {}", s);
                 return s;
             } else{
                 String errorMsg = "请求返回:"+state+"("+url+")";
@@ -145,8 +145,8 @@ public class HttpUtil {
       CloseableHttpResponse response = null;
       String resultString = "";
       try {
-          logger.info("doPost: {}", url);
-          logger.info("params: {}", paramMap);
+          logger.debug("doPost: {}", url);
+          logger.debug("params: {}", paramMap);
           HttpPost httpPost = new HttpPost(url);
           httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
           if (paramMap != null) {
@@ -161,7 +161,7 @@ public class HttpUtil {
             httpPost.setEntity(entity);
           }
           response = httpClient.execute(httpPost);
-          logger.info("出参状态: {}", response.getStatusLine());
+          logger.debug("出参状态: {}", response.getStatusLine());
           resultString = EntityUtils.toString(response.getEntity(), CHAR_SET);
           logger.debug("出参: {}", resultString);
       } catch (Exception e) {
@@ -188,11 +188,11 @@ public class HttpUtil {
             HttpClient client = new DefaultHttpClient();
             HttpGet request = new HttpGet(url);
             HttpResponse response = client.execute(request);
-            logger.info("doGet: [{}]", url);
+            logger.debug("doGet: [{}]", url);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 String s = EntityUtils.toString(response.getEntity(), CHAR_SET);
-                logger.info("response: {}", s);
+                logger.debug("response: {}", s);
                 return s;
             }
             String errorMsg = ":请求返回:" + statusCode + "(" + url + ")";
@@ -215,11 +215,11 @@ public class HttpUtil {
             HttpClient client = new DefaultHttpClient();
             HttpGet request = new HttpGet(url);
             HttpResponse response = client.execute(request);
-            logger.info("doGet: [{}]", url);
+            logger.debug("doGet: [{}]", url);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 String s = EntityUtils.toString(response.getEntity(), CHAR_SET);
-                logger.info("response: {}", StringUtils.left(s, logMaxLen));
+                logger.debug("response: {}", StringUtils.left(s, logMaxLen));
                 return s;
             }
             String errorMsg = ":请求返回:" + statusCode + "(" + url + ")";
