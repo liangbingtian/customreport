@@ -1,9 +1,19 @@
 package fieldtest;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.parser.Feature;
 import com.liang.customreport.enums.JdApiEnum;
+import com.liang.customreport.jdapicall.JdApiV2Service;
 import com.liang.customreport.jdapicall.bo.ParamInfo;
+import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ReqBO;
+import com.liang.customreport.jdapicall.bo.customreport.JingdongAdsIbgCustomQueryV1ResBO;
+import com.liang.customreport.job.random.JingdongAdsIbgCustomQueryV1ReqFieldCombine;
 import com.liang.customreport.job.random.ParamInfoFieldCombine;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 
 /**
@@ -74,9 +84,54 @@ public class RandomFieldTest {
         .appSecret("8d08db8de0ec468ebe234dcfdc1c3dca")
         .api(JdApiEnum.CUSTOM_REPORT_QUERY.getApi())
         .build();
-    ParamInfoFieldCombine combine = new ParamInfoFieldCombine(info);
-    combine.randomFieldCombine();
-    final List<ParamInfo> result = combine.getResult();
+    ParamInfoFieldCombine paramInfoFieldCombine
+        = new ParamInfoFieldCombine(info
+        , Collections.singletonList(ParamInfo::setApi)
+        , Arrays.asList(new String[]{JdApiEnum.CUSTOM_REPORT_QUERY.getApi(), JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi()}, new String[]{})
+        , 1, 2);
+    paramInfoFieldCombine.randomFieldCombine();
+    final List<ParamInfo> result = paramInfoFieldCombine.getResult();
+    System.out.println();
+  }
+
+  @Test
+  public void test3() {
+    final ParamInfo info = ParamInfo.builder()
+        .accessToken("1fb2353257524bf88d3a067195bdba82mzi1")
+        .appKey("A1D3C721A3E382FF4915BE266B4294F6")
+        .appSecret("8d08db8de0ec468ebe234dcfdc1c3dca")
+        .api(JdApiEnum.CUSTOM_REPORT_QUERY.getApi())
+        .build();
+    ParamInfoFieldCombine paramInfoFieldCombine
+        = new ParamInfoFieldCombine(info
+        , Collections.singletonList(ParamInfo::setApi)
+        , Arrays.asList(new String[]{JdApiEnum.CUSTOM_REPORT_QUERY.getApi(), JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi()}, new String[]{})
+        , 1, 2);
+    paramInfoFieldCombine.randomFieldCombine();
+    final List<ParamInfo> result = paramInfoFieldCombine.getResult();
+    System.out.println();
+  }
+
+  @Test
+  public void test4() {
+    JingdongAdsIbgCustomQueryV1ReqBO o=null;
+    try (InputStream inputStream = this.getClass().getClassLoader()
+        .getResourceAsStream("api/customreport_queryparam.json")) {
+       o = JSON.parseObject(
+          Optional.ofNullable(inputStream).orElseThrow(() -> new RuntimeException("读取的为null")),
+          JingdongAdsIbgCustomQueryV1ReqBO.class, Feature.OrderedField);
+      System.out.println();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    JingdongAdsIbgCustomQueryV1ReqFieldCombine randomCombine = new JingdongAdsIbgCustomQueryV1ReqFieldCombine(o,
+        Arrays.asList(JingdongAdsIbgCustomQueryV1ReqBO::setClickOrOrderCaliber,
+            JingdongAdsIbgCustomQueryV1ReqBO::setClickOrOrderDay,
+            JingdongAdsIbgCustomQueryV1ReqBO::setOrderStatusCategory)
+        ,Arrays.asList(new Integer[]{0, 1}, new Integer[]{0, 15}, new Integer[]{null, 1}), 3, 2);
+    randomCombine.randomFieldCombine();
+    List<JingdongAdsIbgCustomQueryV1ReqBO> combineResult = randomCombine.getResult();
     System.out.println();
   }
 

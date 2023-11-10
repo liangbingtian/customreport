@@ -1,8 +1,9 @@
 package com.liang.customreport.job.random;
 
-import com.liang.customreport.enums.JdApiEnum;
 import com.liang.customreport.jdapicall.bo.ParamInfo;
 import com.liang.customreport.mapstructs.ParamInfoMappering;
+import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author liangbingtian
@@ -10,22 +11,15 @@ import com.liang.customreport.mapstructs.ParamInfoMappering;
  */
 public class ParamInfoFieldCombine extends AbstractRandomFieldCombine<ParamInfo, String> {
 
-  public ParamInfoFieldCombine(ParamInfo info) {
-    this.reqBO = info;
+  public ParamInfoFieldCombine(ParamInfo reqBO,
+      List<BiConsumer<ParamInfo, String>> randomSetList,
+      List<String[]> paramValueList, int fieldCount, int valueCount) {
+    super(reqBO, randomSetList, paramValueList, fieldCount, valueCount);
   }
 
-  public void randomFieldCombine() {
-    super.randomFieldCombine(1, 2, new String[]{JdApiEnum.CUSTOM_REPORT_QUERY.getApi(),
-        JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi()});
-  }
 
   @Override
   protected ParamInfo generateSameObject(ParamInfo reqBO) {
     return ParamInfoMappering.INSTANCE.copyOne(reqBO);
-  }
-
-  @Override
-  protected void processValue(int j, String s) {
-    reqBO.setApi(s);
   }
 }

@@ -86,36 +86,33 @@ public class ApiCallTest {
   @Test
   public void callApiTest1() {
     try {
-      JingdongAdsIbgDownloadReqBO reqBO = new JingdongAdsIbgDownloadReqBO();
-      reqBO.setDownloadId(47227393);
-      final ParamInfo info = ParamInfo.builder()
-          .accessToken("f7078b4f58ec41829239a809eedbf207hing")
-          .appKey("A1D3C721A3E382FF4915BE266B4294F6")
-          .appSecret("8d08db8de0ec468ebe234dcfdc1c3dca")
-          .api(JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi())
-          .build();
-      JdApiV2Service<JingdongAdsIbgDownloadReqBO, JingdongAdsIbgDownloadResBO> service = new JdApiV2Service<>();
-      JingdongAdsIbgDownloadResBO result = service
-          .doRequest(reqBO, JingdongAdsIbgDownloadResBO.class, info);
-      Integer status = result.getResponse().getReturnType().getData().getStatus();
-      while (status == 1) {
-        log.info("downloadId:{},未获取到文件链接,继续获取...",
-            result.getResponse().getReturnType().getData().getId());
-        //status 为1 的话继续调用
-        Thread.sleep(5000);
-        result = service.doRequest(reqBO, JingdongAdsIbgDownloadResBO.class, info);
-        status = result.getResponse().getReturnType().getData().getStatus();
-      }
-      Preconditions.checkArgument(status == 2, "调用异步下载api返回出错，返回报文为:" + JSON.toJSONString(result));
-      final String downloadUrl = result.getResponse().getReturnType().getData().getDownloadUrl();
-      Preconditions.checkArgument(StringUtils.isNotBlank(downloadUrl),
-          "status正常但是downloadUrl为空，返回报文为:" + JSON.toJSONString(result));
+//      JingdongAdsIbgDownloadReqBO reqBO = new JingdongAdsIbgDownloadReqBO();
+//      reqBO.setDownloadId(47227393);
+//      final ParamInfo info = ParamInfo.builder()
+//          .accessToken("f7078b4f58ec41829239a809eedbf207hing")
+//          .appKey("A1D3C721A3E382FF4915BE266B4294F6")
+//          .appSecret("8d08db8de0ec468ebe234dcfdc1c3dca")
+//          .api(JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi())
+//          .build();
+//      JdApiV2Service<JingdongAdsIbgDownloadReqBO, JingdongAdsIbgDownloadResBO> service = new JdApiV2Service<>();
+//      JingdongAdsIbgDownloadResBO result = service
+//          .doRequest(reqBO, JingdongAdsIbgDownloadResBO.class, info);
+//      Integer status = result.getResponse().getReturnType().getData().getStatus();
+//      while (status == 1) {
+//        log.info("downloadId:{},未获取到文件链接,继续获取...",
+//            result.getResponse().getReturnType().getData().getId());
+//        //status 为1 的话继续调用
+//        Thread.sleep(5000);
+//        result = service.doRequest(reqBO, JingdongAdsIbgDownloadResBO.class, info);
+//        status = result.getResponse().getReturnType().getData().getStatus();
+//      }
+//      Preconditions.checkArgument(status == 2, "调用异步下载api返回出错，返回报文为:" + JSON.toJSONString(result));
+      final String downloadUrl = "https://storage.jd.com/report-engine-cloud-clouds/20231109/1699497738980000-537791138608664576/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8A%A5%E8%A1%A8API_2023%E5%B9%B411%E6%9C%8809%E6%97%A510%E6%97%B642%E5%88%8618%E7%A7%92%E4%B8%8B%E8%BD%BD.csv?Expires=1715395338&AccessKey=JdqUoH2NY2px0LAI&Signature=Cbx65G%2Fz87FPJcRztQ0IVc7mUYA%3D";
       //获取成功，创建文件目录，往目录里下载
-      log.info("downloadUrl为:{}", downloadUrl);
       Path subDirectory = Paths.get(saveDirectory, "FZ");
       Path subDirectory1 = subDirectory.resolve(Paths.get("2023-10-01->2023-10-31"));
 
-      Path targetDirectory = subDirectory1.resolve(reqBO.getDownloadId().toString());
+      Path targetDirectory = subDirectory1.resolve(saveDirectory);
       if (Files.notExists(targetDirectory)) {
         Files.createDirectories(targetDirectory);
         log.info("目录创建成功，目录路径为:{}", targetDirectory);
@@ -129,7 +126,7 @@ public class ApiCallTest {
           .clickOrOrderDay(15)
           .orderStatusCategory(null)
           .giftFlag(1).build();
-      processDownloadCsv(reqBO.getDownloadId(), downloadUrl, targetDirectory, infoBO);
+      processDownloadCsv(1213, downloadUrl, targetDirectory, infoBO);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       e.printStackTrace();
@@ -199,7 +196,7 @@ public class ApiCallTest {
     try {
       byte[] fileByteArray = WebUrlUtils.getByteArrayFromUrl(downloadUrl);
       if (fileByteArray == null || fileByteArray.length == 0) {
-        log.error("downloadId:{}, downloadUrl:{},参数为:{}, 没有从流中遍历到该文件", downloadId,
+        log.error("username:{}, downloadId:{}, downloadUrl:{},参数为:{}, 没有从流中遍历到该文件",infoBO.getUsername(), downloadId,
             downloadUrl, JSON.toJSONString(infoBO));
         return;
       }

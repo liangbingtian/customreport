@@ -2,6 +2,11 @@ package com.liang.customreport.job.random;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @author liangbingtian
@@ -9,24 +14,41 @@ import java.util.List;
  */
 public abstract class AbstractRandomFieldCombine<T, C> {
 
+  private final T reqBO;
 
-  protected T reqBO;
+  private final List<T> result = new ArrayList<>();
 
-  protected final List<T> result = new ArrayList<>();
+  private final List<BiConsumer<T, C>> randomSetList;
+
+  private final List<C[]> paramValueList;
+
+  private final int fieldCount;
+
+  private final int valueCount;
+
+  public AbstractRandomFieldCombine(T reqBO,
+      List<BiConsumer<T, C>> randomSetList, List<C[]> paramValueList, int fieldCount,
+      int valueCount) {
+    this.reqBO = reqBO;
+    this.randomSetList = randomSetList;
+    this.paramValueList = paramValueList;
+    this.fieldCount = fieldCount;
+    this.valueCount = valueCount;
+  }
 
   /**
    * 根据字段的个数以及字段值的个数随机出不同的字段排列组合，然后设置对象
    *
-   * @param fieldCount 字段个数
-   * @param valueCount 字段值的个数
    */
-  public void randomFieldCombine(int fieldCount, int valueCount, C[]... arrays) {
+  public void randomFieldCombine() {
     int totalCombinations = (int) Math.pow(valueCount, fieldCount);
     for (int i = 0; i < totalCombinations; i++) {
-      for (int j = 0; j < fieldCount; j++) {
+      int j=0;
+      for (BiConsumer<T, C> consumer: randomSetList) {
         int value = (i >> j) & 1;
         // 根据每位的值从不同的数组中查询元素
-        processValue(j, arrays[j][value]);
+        processValue(consumer, paramValueList.get(j)[value]);
+        j++;
       }
       //然后生成一个新的对象!!
       T t = generateSameObject(reqBO);
@@ -44,10 +66,10 @@ public abstract class AbstractRandomFieldCombine<T, C> {
   /**
    * 设置具体的字段
    *
-   * @param j 具体需要设置的字段的索引
-   * @param s 具体要设置的值
    */
-  protected abstract void processValue(int j, C s);
+ private void processValue(BiConsumer<T, C> consumer, C value){
+   consumer.accept(reqBO, value);
+ }
 
   public List<T> getResult() {
     return result;

@@ -1,15 +1,10 @@
 package com.liang.customreport.jdapicall;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.liang.customreport.jdapicall.bo.ParamInfo;
 import com.liang.customreport.jdapicall.bo.common.JdApiV2RequestBo;
-import com.liang.customreport.jdapicall.bo.common.JdApiV2ResultBo;
 import com.liang.customreport.tools.HttpUtil;
 import java.util.Date;
 import java.util.HashMap;

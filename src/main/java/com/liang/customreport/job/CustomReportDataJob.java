@@ -35,13 +35,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -72,8 +73,14 @@ public class CustomReportDataJob {
       // 获取当前 JAR 包的路径
       String jarPath = CustomReportDataJob.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
       // 获取 JAR 包所在的目录
-      saveDirectory = new File(jarPath).getParent();
-      log.info("获取目录成功，目录为:{}", saveDirectory);
+      final String parent = new File(jarPath).getParent();
+      final Path newPath = Paths.get(parent, "syncdatas");
+      if (Files.notExists(newPath)) {
+        Files.createDirectories(newPath);
+        log.info("目录创建成功，目录路径为:{}", newPath);
+      }
+      saveDirectory = newPath.toString();
+      log.info("文件的输出路径为:{}", saveDirectory);
     } catch (Exception e) {
       log.error("获取jar包所在的目录失败，错误为:{}, 使用默认目录", e.getMessage());
     }
@@ -104,7 +111,11 @@ public class CustomReportDataJob {
       ThreadPoolExecutor threadPoolExecutorTwo,
       ParamInfo info) {
     //1. 自定义报表查询调用
-    ParamInfoFieldCombine paramInfoFieldCombine = new ParamInfoFieldCombine(info);
+    ParamInfoFieldCombine paramInfoFieldCombine
+        = new ParamInfoFieldCombine(info
+        , Collections.singletonList(ParamInfo::setApi)
+        , Arrays.asList(new String[]{JdApiEnum.CUSTOM_REPORT_QUERY.getApi(), JdApiEnum.REPORT_DOWNLOAD_QUERY.getApi()}, new String[]{})
+        , 1, 2);
     paramInfoFieldCombine.randomFieldCombine();
     final List<ParamInfo> paramInfoList = paramInfoFieldCombine.getResult();
 
@@ -132,8 +143,13 @@ public class CustomReportDataJob {
         JingdongAdsIbgCustomQueryV1ReqBO reqBo1 = JingdongAdsIbgCustomQueryV1ReqMappering.INSTANCE
             .copyOne(reqBO);
         reqBo1.setStartDay(startDayStr).setEndDay(endDayStr);
+
         JingdongAdsIbgCustomQueryV1ReqFieldCombine randomCombine = new JingdongAdsIbgCustomQueryV1ReqFieldCombine(
-            reqBo1);
+            reqBo1,
+            Arrays.asList(JingdongAdsIbgCustomQueryV1ReqBO::setClickOrOrderCaliber,
+                JingdongAdsIbgCustomQueryV1ReqBO::setClickOrOrderDay,
+                JingdongAdsIbgCustomQueryV1ReqBO::setOrderStatusCategory)
+            ,Arrays.asList(new Integer[]{0, 1}, new Integer[]{0, 15}, new Integer[]{null, 1}), 3, 2);
         randomCombine.randomFieldCombine();
         List<JingdongAdsIbgCustomQueryV1ReqBO> combineResult = randomCombine.getResult();
 
@@ -260,7 +276,7 @@ public class CustomReportDataJob {
     try {
       byte[] fileByteArray = WebUrlUtils.getByteArrayFromUrl(downloadUrl);
       if (fileByteArray == null || fileByteArray.length == 0) {
-        log.error("downloadId:{}, downloadUrl:{},参数为:{}, 没有从流中遍历到该文件", downloadId,
+        log.error("username:{}, downloadId:{}, downloadUrl:{},参数为:{}, 没有从流中遍历到该文件",infoBO.getUsername(), downloadId,
             downloadUrl, JSON.toJSONString(infoBO));
         return;
       }
